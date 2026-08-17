@@ -1,0 +1,4 @@
+# Minimal pytest configuration so that running `python -m pytest` from this
+# project root does not pick up configuration from a parent project.
+[tool.pytest.ini_options]
+testpaths = ["tests"]

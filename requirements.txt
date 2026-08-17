@@ -1,0 +1,38 @@
+# LangChain ecosystem
+langchain
+langchain-core
+langchain-text-splitters
+langchain-huggingface
+langchain-ollama
+langchain-mcp-adapters
+langgraph
+
+# MCP (calendar agent)
+mcp
+
+# Document processing
+pymupdf
+
+# Embeddings (sentence-transformers/all-MiniLM-L6-v2)
+# and reranking (BAAI/bge-reranker-v2-m3)
+sentence-transformers
+
+# Vector store (dense retrieval)
+chromadb
+
+# BM25 (sparse retrieval)
+rank-bm25
+
+# API
+fastapi
+uvicorn
+
+# Configuration
+python-dotenv
+
+# Frontend (streamlit run frontend/app.py)
+streamlit
+
+# Testing
+pytest
+httpx
