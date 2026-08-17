@@ -41,6 +41,14 @@ _TRANSIENT_STATUSES = {429, 500, 502, 503, 529}
 _MAX_ATTEMPTS = 3
 _RETRY_DELAY_S = 1.5
 
+_CONNECTION_MARKERS = ("connect", "connection", "refused", "unreachable", "timed out")
+
+
+def is_ollama_connection_error(exc: Exception) -> bool:
+    """True when the exception looks like the Ollama server being unreachable."""
+    message = str(exc).lower()
+    return any(marker in message for marker in _CONNECTION_MARKERS)
+
 
 def _is_transient(exc: Exception) -> bool:
     """True for retryable upstream errors (rate limit / overload)."""
@@ -61,11 +69,7 @@ def call_llm(llm, *args, **kwargs):
         except OllamaUnavailableError:
             raise
         except Exception as exc:  # noqa: BLE001 - classified below
-            message = str(exc).lower()
-            if any(
-                marker in message
-                for marker in ("connect", "connection", "refused", "unreachable", "timed out")
-            ):
+            if is_ollama_connection_error(exc):
                 raise OllamaUnavailableError(
                     f"Ollama is unavailable at {config.OLLAMA_BASE_URL} "
                     f"(model: {config.OLLAMA_MODEL}). Start it with `ollama serve` "

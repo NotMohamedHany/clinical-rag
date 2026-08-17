@@ -67,8 +67,11 @@ def render_sources(sources: list[dict]) -> None:
     st.caption("Sources: " + ", ".join(labels))
 
 
-def render_debug(iterations: list[dict]) -> None:
-    with st.expander(f"Retrieval process ({len(iterations)} iteration(s))"):
+def render_debug(iterations: list[dict], tool_calls: list[dict] | None = None) -> None:
+    with st.expander(f"Supervisor trace ({len(iterations)} retrieval iteration(s))"):
+        for call in tool_calls or []:
+            st.markdown(f"**Tool: `{call['tool']}`**")
+            st.write(f"Args: `{call['args']}`")
         for entry in iterations:
             st.markdown(
                 f"**Iteration {entry['iteration']}** — "
@@ -122,7 +125,7 @@ for message in st.session_state.messages:
         if message["role"] == "assistant" and message.get("sources"):
             render_sources(message["sources"])
         if message.get("iterations"):
-            render_debug(message["iterations"])
+            render_debug(message["iterations"], message.get("tool_calls"))
 
 if prompt := st.chat_input("Ask a question about the guideline..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -142,11 +145,12 @@ if prompt := st.chat_input("Ask a question about the guideline..."):
                 "content": clean_answer(result["answer"]),
                 "sources": result.get("sources", []),
                 "iterations": result.get("iterations"),
+                "tool_calls": result.get("tool_calls"),
             }
             st.markdown(payload["content"])
             if payload["sources"]:
                 render_sources(payload["sources"])
             if payload["iterations"]:
-                render_debug(payload["iterations"])
+                render_debug(payload["iterations"], payload["tool_calls"])
 
     st.session_state.messages.append(payload)

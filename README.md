@@ -259,6 +259,12 @@ The API is then at `http://localhost:8000` (interactive docs at
 
 ### `/chat`
 
+The chat endpoints run the **supervisor agent**: one agent whose tools are
+the whole RAG pipeline (`clinical_guidelines`) plus the n8n calendar
+webhook (`manage_calendar`). It routes medical questions to the RAG tool
+and scheduling questions to the calendar sub-agent; each conversation
+session gets its own supervisor with tools bound to that session.
+
 Request:
 
 ```json
@@ -280,11 +286,15 @@ Response:
 }
 ```
 
+`answer` is the supervisor's final text; `sources` are the citations from
+the RAG tool (empty for calendar-only questions).
+
 ### `/chat/debug`
 
-Same request; response adds `original_query` and `iterations` with
-`query`, `hybrid_results`, `reranked_results`, and `relevance_score` per
-retrieval attempt. No chain-of-thought is exposed.
+Same request; response adds `original_query`, `iterations` (the RAG
+tool's per-attempt queries, candidate counts and relevance scores) and
+`tool_calls` (the supervisor's tool trace: tool name + args). No
+chain-of-thought is exposed.
 
 Errors: `400` invalid request (empty message/session), `503` for
 unavailable Ollama or missing indexes, `500` for unexpected failures
@@ -550,8 +560,11 @@ The MCP connection logic is shared in `src/agent/calendar_mcp.py`
 
 The entire RAG pipeline is wrapped as **one LangChain tool** -
 `clinical_guidelines` in `src/rag/rag_tool.py` - so a supervisor agent can
-use it alongside anything else (here: the calendar MCP tools). The
-supervisor LLM decides per question which tool(s) to call.
+use it alongside anything else (here: the n8n calendar webhook). The
+supervisor LLM decides per question which tool(s) to call. **The FastAPI
+`/chat` and `/chat/debug` endpoints run this supervisor** (see §8): each
+conversation session gets its own supervisor instance with tools bound to
+that session, so memory works end to end.
 
 ```text
          supervisor_agent.py (create_agent)

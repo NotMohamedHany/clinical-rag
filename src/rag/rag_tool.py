@@ -1,12 +1,16 @@
-"""The whole RAG pipeline as a single LangChain tool for supervisor agents.
+"""The whole RAG pipeline as a tool for supervisor agents.
 
-The tool wraps run_chat (memory -> query rewrite -> hybrid search -> rerank
--> relevance grade -> generate) so an outer agent sees the entire clinical
-RAG system as ONE tool node: it passes a question and receives the answer
-with source citations.
+clinical_guidelines_tool(session_id) builds the RAG tool bound to one
+conversation session: it wraps run_chat (memory -> query rewrite -> hybrid
+search -> rerank -> relevance grade -> generate) so an outer agent sees the
+entire clinical RAG system as ONE tool call. It returns JSON so the outer
+agent and the API layer both get the answer, the source citations, and the
+retrieval debug trace.
 """
 
-from langchain_core.tools import tool
+import json
+
+from langchain_core.tools import BaseTool, tool
 
 from src.memory.conversation import ConversationMemory
 from src.rag.graph import RagAgent, run_chat
@@ -16,6 +20,13 @@ from src.rag.graph import RagAgent, run_chat
 _agent: RagAgent | None = None
 _memory = ConversationMemory()
 
+CLINICAL_GUIDELINES_DESCRIPTION = """Answer clinical questions using ONLY the guideline PDFs in data/ \
+(e.g. diabetes, osteoporosis). Covers diagnosis, treatment, management, screening, urgent referral \
+and dosing recommendations, cited by source file, guideline type and page. If the guidelines do not \
+contain enough information, the answer says so explicitly. Returns JSON with "answer", "sources" \
+(list of {"source", "type", "page"}) and "retrieval" (per-attempt queries and relevance scores). \
+Use this tool for any medical/clinical question."""
+
 
 def _get_agent() -> RagAgent:
     global _agent
@@ -24,18 +35,27 @@ def _get_agent() -> RagAgent:
     return _agent
 
 
-@tool
-def clinical_guidelines(question: str, session_id: str = "supervisor") -> str:
-    """Answer clinical questions using ONLY the guideline PDFs in data/ (e.g. diabetes, hypertension).
+def clinical_guidelines_tool(session_id: str) -> BaseTool:
+    """Build the RAG tool bound to one conversation session."""
 
-    Covers diagnosis, treatment, management, screening, urgent referral and
-    dosing recommendations, cited by source file, guideline type and page.
-    If the guidelines do not contain enough information, the answer says so
-    explicitly. Use this tool for any medical/clinical question.
-    """
-    state = run_chat(_get_agent(), _memory, session_id, question)
-    citations = "; ".join(
-        f"{source['source']} ({source['type']}, page {source['page']})"
-        for source in state["sources"]
-    )
-    return f"{state['final_answer']}\n\n[Retrieved sources: {citations}]"
+    def run(question: str) -> str:
+        state = run_chat(_get_agent(), _memory, session_id, question)
+        return json.dumps(
+            {
+                "answer": state["final_answer"],
+                "sources": state["sources"],
+                "retrieval": [
+                    {
+                        "iteration": entry["iteration"],
+                        "query": entry["query"],
+                        "hybrid_results": len(state.get("candidates", [])),
+                        "reranked_results": len(state.get("top_chunks", [])),
+                        "relevance_score": entry["relevance_score"],
+                    }
+                    for entry in state["search_history"]
+                ],
+            },
+            ensure_ascii=False,
+        )
+
+    return tool("clinical_guidelines", run, description=CLINICAL_GUIDELINES_DESCRIPTION)

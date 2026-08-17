@@ -30,11 +30,19 @@ class IterationInfo(BaseModel):
     relevance_score: float
 
 
+class ToolCallInfo(BaseModel):
+    """One tool call the supervisor agent made."""
+
+    tool: str
+    args: str
+
+
 class DebugResponse(BaseModel):
-    """Full retrieval process for inspection - concise metadata only."""
+    """Supervisor execution trace for inspection - concise metadata only."""
 
     session_id: str
     original_query: str
     iterations: list[IterationInfo]
+    tool_calls: list[ToolCallInfo] = Field(default_factory=list)
     final_answer: str
     sources: list[Source]
