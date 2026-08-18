@@ -28,6 +28,10 @@ CHROMA_DIR = PROJECT_ROOT / "chroma_db"
 BM25_DIR = PROJECT_ROOT / "bm25"
 BM25_CORPUS_PATH = BM25_DIR / "bm25_corpus.pkl"
 
+# CSV user registry (username, name, role, salt, password_hash) - seeded
+# with demo accounts on first run, see src/api/auth.py.
+USERS_CSV_PATH = Path(os.getenv("USERS_CSV_PATH", str(PROJECT_ROOT / "users.csv")))
+
 # ---------------------------------------------------------------------------
 # ChromaDB
 # ---------------------------------------------------------------------------
@@ -81,3 +85,9 @@ RELEVANCE_THRESHOLD = 0.70   # relevance grade needed to generate
 # ---------------------------------------------------------------------------
 
 MAX_HISTORY_TURNS = 6        # most recent user/assistant exchanges used for rewriting
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
+
+TOKEN_TTL_SECONDS = int(os.getenv("TOKEN_TTL_SECONDS", "0"))  # 0 = never expire

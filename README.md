@@ -39,8 +39,11 @@ uvicorn src.api.main:app --reload        # http://localhost:8000/docs
 # 5. (Optional) start the Streamlit chat UI
 streamlit run frontend/app.py            # http://localhost:8501
 
-# 6. Try it
+# 6. Try it (login first - demo account: doctor / doctor123, see §21)
+TOKEN=$(curl -s -X POST "http://localhost:8000/auth/login" -H "Content-Type: application/json" \
+  -d '{"username": "doctor", "password": "doctor123"}' | python -c "import sys,json;print(json.load(sys.stdin)['token'])")
 curl -X POST "http://localhost:8000/chat" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{"session_id": "demo-1", "message": "What are the diagnostic criteria for diabetes?"}'
 ```
 
@@ -243,9 +246,11 @@ The API is then at `http://localhost:8000` (interactive docs at
 
 | Endpoint | Method | Purpose |
 |---|---|---|
-| `/health` | GET | Service status (LLM + vector store) |
-| `/chat` | POST | Ask a question; returns answer + sources |
-| `/chat/debug` | POST | Same, plus concise retrieval metadata |
+| `/health` | GET | Service status (LLM + vector store) — public |
+| `/auth/login` | POST | Exchange credentials for a bearer token (public) |
+| `/auth/logout` | POST | Revoke the presented token |
+| `/chat` | POST | Ask a question; returns answer + sources (needs `Authorization: Bearer <token>`) |
+| `/chat/debug` | POST | Same, plus concise retrieval metadata (needs the header too) |
 
 ### `/health`
 
@@ -317,9 +322,17 @@ questions like "What about HbA1c?" resolve against earlier turns.
 
 ## 9. Example curl requests
 
+First log in to get a token (see §21 for the demo accounts and roles):
+
 ```bash
+TOKEN=$(curl -s -X POST "http://localhost:8000/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "doctor", "password": "doctor123"}' \
+  | python -c "import sys, json; print(json.load(sys.stdin)['token'])")
+
 curl -X POST "http://localhost:8000/chat" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{
     "session_id": "demo-1",
     "message": "What are the diagnostic criteria for diabetes?"
@@ -331,6 +344,7 @@ A follow-up that uses conversation memory:
 ```bash
 curl -X POST "http://localhost:8000/chat" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
   -d '{
     "session_id": "demo-1",
     "message": "What about HbA1c?"
@@ -596,6 +610,53 @@ Shared agent helpers: `src/agent/calendar_mcp.py` (MCP connection),
 `src/agent/chat.py` (stream printing), `src/agent/tools.py`
 (`get_current_time`). The calendar agent (`calendar_agent.py`) uses the
 same modules.
+
+## 21. Login & roles
+
+The API requires a login for chat. The user registry is a plain CSV
+(`users.csv` at the project root, gitignored) with columns
+`username,name,role,salt,password_hash`; passwords are hashed with PBKDF2
+(stdlib only — no extra dependencies). On the first API start the file is
+seeded automatically with two demo accounts:
+
+| Username | Password | Role | Sees |
+|---|---|---|---|
+| `doctor` | `doctor123` | doctor | Full supervisor: clinical guidelines RAG **and** calendar management (n8n webhook) |
+| `patient` | `patient123` | patient | Clinical guidelines RAG only — the calendar tool is never constructed, so patients cannot schedule even with a crafted request |
+
+### Managing users
+
+```bash
+# Add a user (prompts for the password; use --password to pass it inline)
+python -m src.api.auth add alice doctor --name "Dr. Alice"
+python -m src.api.auth add bob patient
+
+# List users (shows usernames/roles/names, never hashes)
+python -m src.api.auth list
+```
+
+New users are picked up by the running API immediately (the CSV is read fresh
+on every login). Tokens are random hex strings kept in memory — they are lost
+when the API restarts, so clients simply re-login (any old token then 401s).
+
+### How role enforcement works
+
+- `POST /auth/login` returns `{token, username, role, name}`; send it as
+  `Authorization: Bearer <token>` on `/chat` and `/chat/debug`. Missing or
+  invalid tokens get `401` (+ `WWW-Authenticate: Bearer`); an authenticated
+  user hitting a role-restricted endpoint gets `403`.
+- The role decides which supervisor is built: doctor gets
+  `[clinical_guidelines, manage_calendar, get_current_time]`, patient gets
+  `[clinical_guidelines]` only, with a system prompt that politely declines
+  scheduling questions. The split is server-side: there is no calendar tool a
+  patient could invoke.
+- Conversation sessions are keyed `username:session_id`, which also
+  namespaces the process-wide conversation memory and the n8n webhook's
+  `sessionid` — users never share history, even with the same session id.
+
+Known limitation: the n8n webhook URL itself (`WEBHOOK_URL` in
+`src/agent/tools.py`) is unauthenticated — role enforcement protects the API
+surface, not the webhook endpoint.
 
 ## Data flow (recap)
 

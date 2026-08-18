@@ -16,7 +16,7 @@ class OllamaUnavailableError(RuntimeError):
     """
 
 
-def get_llm(temperature: float = 0.2) -> ChatOllama:
+def get_llm(temperature: float = 0) -> ChatOllama:
     """Return a ChatOllama instance configured from the environment."""
     return ChatOllama(
         model=config.OLLAMA_MODEL,
