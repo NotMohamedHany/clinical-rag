@@ -68,10 +68,10 @@ CHUNK_OVERLAP = 200
 # Retrieval
 # ---------------------------------------------------------------------------
 
-VECTOR_K = 10       # candidates from dense (Chroma) search
-BM25_K = 10         # candidates from sparse (BM25) search
+VECTOR_K = 30       # candidates from dense (Chroma) search
+BM25_K = 30         # candidates from sparse (BM25) search
 RRF_K = 60          # reciprocal-rank-fusion constant
-RERANK_TOP_N = 5    # final documents after reranking
+RERANK_TOP_N = 8    # final documents after reranking
 
 # ---------------------------------------------------------------------------
 # Self-improving retrieval

@@ -31,8 +31,14 @@ def get_bm25_search() -> "BM25Search":
 
 
 def tokenize(text: str) -> list[str]:
-    """Simple lowercase, non-alphanumeric-split tokenizer for BM25."""
-    return re.findall(r"[a-z0-9]+", text.lower())
+    """Tokenizer preserving clinical notation, hyphenated terms, units, and numbers."""
+    raw_tokens = re.findall(r"[a-z0-9\-\.\/>=<]+", text.lower())
+    tokens = []
+    for t in raw_tokens:
+        cleaned = t.strip(".-")
+        if cleaned:
+            tokens.append(cleaned)
+    return tokens
 
 
 class BM25Search:

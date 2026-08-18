@@ -77,17 +77,27 @@ def _extract_trace(messages: list) -> tuple[list[dict], list[dict], list[dict]]:
     for message in messages:
         if isinstance(message, AIMessage):
             for call in message.tool_calls:
-                tool_calls.append({"tool": call["name"], "args": json.dumps(call["args"])})
+                tool_calls.append({
+                    "tool": call.get("name", "unknown"),
+                    "args": json.dumps(call.get("args", {})),
+                })
         elif isinstance(message, ToolMessage):
-            try:
-                data = json.loads(message.content)
-                if isinstance(data, dict):
-                    if "sources" in data and isinstance(data["sources"], list):
-                        sources.extend(data["sources"])
-                    if "retrieval" in data and isinstance(data["retrieval"], list):
-                        iterations.extend(data["retrieval"])
-            except (json.JSONDecodeError, TypeError):
-                pass
+            content = message.content
+            if isinstance(content, str):
+                try:
+                    data = json.loads(content)
+                    if isinstance(data, dict):
+                        if "sources" in data and isinstance(data["sources"], list):
+                            sources.extend(data["sources"])
+                        if "retrieval" in data and isinstance(data["retrieval"], list):
+                            iterations.extend(data["retrieval"])
+                except (json.JSONDecodeError, TypeError):
+                    logger.debug("Tool %s produced non-JSON string content", getattr(message, "name", "tool"))
+            elif isinstance(content, dict):
+                if "sources" in content and isinstance(content["sources"], list):
+                    sources.extend(content["sources"])
+                if "retrieval" in content and isinstance(content["retrieval"], list):
+                    iterations.extend(content["retrieval"])
 
     # Deduplicate sources preserving order
     merged: list[dict] = []
@@ -148,10 +158,13 @@ async def chat(
     _check_indexes()
     try:
         res = await _run(payload, request, user)
+        tool_names = [tc["tool"] for tc in res["tool_calls"]]
         return ChatResponse(
             session_id=payload.session_id,
             answer=res["answer"],
             sources=[Source(**s) for s in res["sources"]],
+            tools_used_count=len(res["tool_calls"]),
+            tools_used=tool_names,
         )
     except Exception as exc:
         if is_ollama_connection_error(exc):
@@ -161,33 +174,6 @@ async def chat(
             ) from exc
         raise
 
-
-@router.post("/debug", response_model=DebugResponse, summary="Send question with full debug trace")
-async def chat_debug(
-    payload: ChatRequest,
-    request: Request,
-    user: User = Depends(require_role("doctor", "patient")),
-) -> DebugResponse:
-    """Send a prompt and return the detailed tool & retrieval execution trace."""
-    _validate_request(payload)
-    _check_indexes()
-    try:
-        res = await _run(payload, request, user)
-        return DebugResponse(
-            session_id=payload.session_id,
-            original_query=payload.message,
-            iterations=[IterationInfo(**i) for i in res["iterations"]],
-            tool_calls=[ToolCallInfo(**c) for c in res["tool_calls"]],
-            final_answer=res["answer"],
-            sources=[Source(**s) for s in res["sources"]],
-        )
-    except Exception as exc:
-        if is_ollama_connection_error(exc):
-            raise HTTPException(
-                status_code=503,
-                detail=f"Ollama is unavailable at {config.OLLAMA_BASE_URL}.",
-            ) from exc
-        raise
 
 
 @router.post("/stream", summary="Stream agent response via Server-Sent Events (SSE)")
@@ -210,29 +196,62 @@ async def chat_stream(
             turn_start = len(session["messages"])
             session["messages"].append(HumanMessage(content=payload.message))
 
+            seen_messages: set[int] = set()
+
             async for event in session["agent"].astream({"messages": session["messages"]}):
                 for payload_data in event.values():
-                    message = payload_data["messages"][-1]
-                    if isinstance(message, AIMessage):
-                        if message.content:
-                            data = json.dumps({"token": message.content})
-                            yield f"event: token\ndata: {data}\n\n"
-                        for call in message.tool_calls:
-                            tool_data = json.dumps({"tool": call["name"], "args": call["args"]})
-                            yield f"event: tool_start\ndata: {tool_data}\n\n"
+                    if not isinstance(payload_data, dict):
+                        continue
+                    msgs = payload_data.get("messages", [])
+                    if not msgs:
+                        continue
 
-            final_res = await _run(payload, request, user)
+                    # Append new messages from agent execution to session history
+                    for msg in msgs:
+                        if msg not in session["messages"]:
+                            session["messages"].append(msg)
+
+                    for msg in session["messages"][turn_start:]:
+                        msg_id = id(msg)
+                        if msg_id in seen_messages:
+                            continue
+                        seen_messages.add(msg_id)
+
+                        if isinstance(msg, AIMessage):
+                            if msg.content:
+                                token_data = json.dumps({"token": msg.content}, ensure_ascii=False)
+                                yield f"event: token\ndata: {token_data}\n\n"
+                            for call in msg.tool_calls:
+                                tool_data = json.dumps({"tool": call["name"], "args": call["args"]}, ensure_ascii=False)
+                                yield f"event: tool_start\ndata: {tool_data}\n\n"
+
+            # Extract trace (sources, iterations, tool calls) from the messages in this turn
+            turn_messages = session["messages"][turn_start:]
+            sources, iterations, tool_calls = _extract_trace(turn_messages)
+
+            # Determine final answer from the last AIMessage with content
+            answer = ""
+            for msg in reversed(turn_messages):
+                if isinstance(msg, AIMessage) and msg.content:
+                    answer = msg.content
+                    break
+
+            tool_names = [tc["tool"] for tc in tool_calls]
             final_data = json.dumps(
                 {
                     "session_id": payload.session_id,
-                    "answer": final_res["answer"],
-                    "sources": final_res["sources"],
-                }
+                    "answer": answer,
+                    "sources": sources,
+                    "tools_used_count": len(tool_calls),
+                    "tools_used": tool_names,
+                },
+                ensure_ascii=False,
             )
             yield f"event: final\ndata: {final_data}\n\n"
 
         except Exception as exc:
-            err_data = json.dumps({"error": str(exc)})
+            logger.exception("error in chat stream: %s", exc)
+            err_data = json.dumps({"error": str(exc)}, ensure_ascii=False)
             yield f"event: error\ndata: {err_data}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")

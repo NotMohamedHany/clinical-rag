@@ -213,14 +213,17 @@ def load_pdf(
 
         for page_number, page in enumerate(pdf, start=1):
 
-            # sort=True improves reading order for many PDFs,
-            # especially when text blocks are positioned differently.
-            text = page.get_text(
-                "text",
-                sort=True,
-            )
-
-            text = normalize_text(text)
+            # Use block extraction to preserve reading order, tabular layouts,
+            # and distinct section headers.
+            blocks = page.get_text("blocks")
+            text_blocks = []
+            for b in blocks:
+                if len(b) >= 5 and b[4]:
+                    block_text = b[4].strip()
+                    if block_text:
+                        text_blocks.append(block_text)
+            raw_text = "\n\n".join(text_blocks) if text_blocks else page.get_text("text", sort=True)
+            text = normalize_text(raw_text)
 
             if not text:
                 continue

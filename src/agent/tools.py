@@ -28,7 +28,7 @@ def post_calendar_webhook(text: str, session_id: str) -> str:
     }
 
     try:
-        response = requests.post(WEBHOOK_URL, json=payload)
+        response = requests.post(WEBHOOK_URL, json=payload, timeout=20.0)
         # Print raw response if it fails to help debugging
         if response.status_code != 200:
             return f"HTTP Error {response.status_code}: {response.text}"
@@ -39,6 +39,8 @@ def post_calendar_webhook(text: str, session_id: str) -> str:
         except ValueError:
             return f"Received non-JSON response: {response.text}"
 
+    except requests.exceptions.Timeout:
+        return "Error: Calendar service timed out."
     except requests.exceptions.RequestException as e:
         return f"Error communicating with the Calendar Sub-Agent: {str(e)}"
 

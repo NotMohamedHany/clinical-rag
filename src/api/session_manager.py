@@ -13,21 +13,42 @@ from src.agent.supervisor import build_supervisor
 logger = logging.getLogger("clinical_rag.session_manager")
 
 
+SESSION_TTL_SECONDS = 86400  # 24 hours
+
+
 class SessionManager:
     """Manages active agent instances and message histories per username:session_id."""
 
-    def __init__(self):
+    def __init__(self, ttl_seconds: int = SESSION_TTL_SECONDS):
         self._sessions: dict[str, dict[str, Any]] = {}
         self._lock = Lock()
+        self._ttl_seconds = ttl_seconds
+
+    def _cleanup_stale_unlocked(self) -> None:
+        """Evict sessions inactive longer than TTL."""
+        now = datetime.now(timezone.utc)
+        stale_keys = []
+        for key, session in self._sessions.items():
+            try:
+                last_dt = datetime.fromisoformat(session["last_active"])
+                if (now - last_dt).total_seconds() > self._ttl_seconds:
+                    stale_keys.append(key)
+            except Exception:
+                pass
+        for key in stale_keys:
+            del self._sessions[key]
+            logger.info("evicted stale session key=%s", key)
 
     def get_or_create_session(
         self, username: str, session_id: str, role: str, llm: BaseChatModel
     ) -> dict[str, Any]:
         """Fetch or initialize a session dict bound to user and session_id."""
         key = f"{username}:{session_id}"
-        now_str = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        now_dt = datetime.now(timezone.utc)
+        now_str = now_dt.isoformat(timespec="seconds")
 
         with self._lock:
+            self._cleanup_stale_unlocked()
             session = self._sessions.get(key)
             if session is None:
                 logger.info("creating new supervisor session user=%s session_id=%s role=%s", username, session_id, role)

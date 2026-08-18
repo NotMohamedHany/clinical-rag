@@ -62,6 +62,8 @@ class ChatResponse(BaseModel):
     session_id: str
     answer: str
     sources: list[Source] = Field(default_factory=list)
+    tools_used_count: int = Field(default=0, description="Total number of tool calls executed")
+    tools_used: list[str] = Field(default_factory=list, description="Names of tools executed")
 
 
 class IterationInfo(BaseModel):

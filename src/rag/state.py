@@ -31,5 +31,6 @@ class RagState(TypedDict, total=False):
     relevance_ok: bool           # grade result vs RELEVANCE_THRESHOLD
     relevance_score: float       # grade score (0-1)
     relevance_reason: str        # grader's reason, used to guide the rewrite
+    insufficient_evidence: bool  # set when max iterations reached without passing relevance threshold
     final_answer: str            # generated answer
     sources: list[dict]          # [{"source": ..., "page": ...}] from top chunks

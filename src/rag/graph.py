@@ -88,6 +88,7 @@ def _initial_state(session_id: str, message: str, history: list[dict]) -> dict:
         "relevance_ok": False,
         "relevance_score": 0.0,
         "relevance_reason": "",
+        "insufficient_evidence": False,
         "final_answer": "",
         "sources": [],
     }
@@ -140,18 +141,27 @@ class RagAgent:
     def _hybrid_search(self, state: RagState) -> dict:
         query = state["current_query"]
         candidates = self.hybrid_search.search(query)
-        top_chunks, scores = rerank(query, candidates, top_n=config.RERANK_TOP_N)
+        new_top_chunks, scores = rerank(query, candidates, top_n=config.RERANK_TOP_N)
+
+        existing = list(state.get("top_chunks", []))
+        seen_ids = {c.chunk_id for c in existing}
+        combined = list(existing)
+        for c in new_top_chunks:
+            if c.chunk_id not in seen_ids:
+                seen_ids.add(c.chunk_id)
+                combined.append(c)
 
         _log_attempt(
             state,
-            "hybrid_candidates=%d reranked=%d top_scores=%s",
+            "hybrid_candidates=%d reranked=%d accumulated=%d top_scores=%s",
             len(candidates),
-            len(top_chunks),
+            len(new_top_chunks),
+            len(combined),
             [round(s, 3) for s in scores[:3]],
         )
         return {
             "candidates": candidates,
-            "top_chunks": top_chunks,
+            "top_chunks": combined,
             "rerank_scores": scores,
         }
 
@@ -167,19 +177,39 @@ class RagAgent:
                 "relevance_score": grade.score,
             }
         )
-        _log_attempt(state, "relevance_score=%.2f relevant=%s", grade.score, grade.relevant)
+        is_ok = grade.score >= config.RELEVANCE_THRESHOLD
+        is_last_iteration = iteration >= config.MAX_ITERATIONS
+        insufficient = not is_ok and is_last_iteration
+
+        _log_attempt(
+            state,
+            "relevance_score=%.2f relevant=%s insufficient=%s",
+            grade.score,
+            grade.relevant,
+            insufficient,
+        )
         return {
             "iteration": iteration,
             "search_history": search_history,
-            "relevance_ok": grade.score >= config.RELEVANCE_THRESHOLD,
+            "relevance_ok": is_ok,
             "relevance_score": grade.score,
             "relevance_reason": grade.reason,
+            "insufficient_evidence": insufficient,
         }
 
     def _generate(self, state: RagState) -> dict:
-        answer = self.generator.generate(state["original_query"], state["top_chunks"])
-        sources = _build_sources(state["top_chunks"])
-        _log_attempt(state, "generated answer (%d chars), %d sources", len(answer), len(sources))
+        insufficient = state.get("insufficient_evidence", False)
+        answer = self.generator.generate(
+            state["original_query"], state["top_chunks"], insufficient=insufficient
+        )
+        sources = _build_sources(state["top_chunks"]) if not insufficient else []
+        _log_attempt(
+            state,
+            "generated answer (%d chars), %d sources (insufficient=%s)",
+            len(answer),
+            len(sources),
+            insufficient,
+        )
         return {"final_answer": answer, "sources": sources}
 
     # ------------------------------------------------------------- routing

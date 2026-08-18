@@ -10,9 +10,9 @@ class Generator:
     def __init__(self) -> None:
         self._llm = get_llm()
 
-    def generate(self, question: str, chunks) -> str:
+    def generate(self, question: str, chunks, insufficient: bool = False) -> str:
         """Return the model's answer for the given evidence chunks."""
-        if not chunks:
+        if not chunks or insufficient:
             return (
                 "The provided clinical guideline does not contain sufficient "
                 "information to answer this question."
