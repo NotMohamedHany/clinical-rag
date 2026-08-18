@@ -1,0 +1,17 @@
+{
+  "username": "test",
+  "session_id": "1b0a6725",
+  "role": "patient",
+  "created_at": "2026-08-18T15:50:09+00:00",
+  "last_active": "2026-08-18T15:50:09+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "how are u"
+    },
+    {
+      "type": "ai",
+      "content": "I'm doing well, thank you for asking! I am here and ready to help you. \n\nHow are you feeling today? Is there anything health-related on your mind, or any symptoms you'd like to discuss?"
+    }
+  ]
+}

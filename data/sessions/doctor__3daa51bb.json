@@ -1,0 +1,39 @@
+{
+  "username": "doctor",
+  "session_id": "3daa51bb",
+  "role": "doctor",
+  "created_at": "2026-08-18T15:51:18+00:00",
+  "last_active": "2026-08-18T15:52:10+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "am i free saturday"
+    },
+    {
+      "type": "tool",
+      "content": "2026-08-18T18:51+03:00",
+      "name": "get_current_time"
+    },
+    {
+      "type": "tool",
+      "content": "\n\nYou have **one event** scheduled this Saturday, August 22nd:\n\n- **check1** — 9:00 AM to 10:00 AM (Cairo time)\n\nThat means you're **not completely free**, but you are free:\n- Before 9:00 AM\n- After 10:00 AM\n\nWould you like me to help you schedule something at a different time on Saturday?",
+      "name": "manage_calendar"
+    },
+    {
+      "type": "ai",
+      "content": "You have one event scheduled this Saturday, August 22nd: **check1** from 9:00 AM to 10:00 AM. Aside from that, you are free."
+    },
+    {
+      "type": "human",
+      "content": "hi"
+    },
+    {
+      "type": "human",
+      "content": "hi"
+    },
+    {
+      "type": "ai",
+      "content": "Hello! How can I assist you today?"
+    }
+  ]
+}

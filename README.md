@@ -1,670 +1,592 @@
-# Clinical Guidelines RAG — Agentic RAG API
+# Clinical Guidelines RAG — Agentic Clinical Assistant & API Platform
 
-An agentic retrieval-augmented-generation backend for clinical guidelines
-(bundled example: the WHO **HEARTS-D** guideline, "Diagnosis and Management
-of Type 2 Diabetes"). It answers guideline questions strictly from the
-retrieved evidence, with conversation memory, query improvement, hybrid
-retrieval, local reranking, relevance grading with retry, and source
-citations. Any guideline PDF can be added — see §5.
+An enterprise-grade, production-ready **Agentic Retrieval-Augmented Generation (RAG) platform and Multi-Agent Clinical Assistant**. Built to query medical guidelines (including WHO **HEARTS-D**, NICE Type 1 & 2 Diabetes, Hypertension, Osteoporosis, and Gastroenterology guidelines), perform bilingual symptom/vital sign triage, and automate doctor calendar management.
 
-**Educational/research use only.** The system never diagnoses, never
-prescribes, and explicitly says when the guideline does not contain enough
-information.
+The platform integrates:
+- **Agentic RAG Engine**: Self-improving hybrid retrieval (ChromaDB Dense Vector + BM25 Sparse search, Reciprocal Rank Fusion, Cross-Encoder reranking, iterative query rewriting, and LLM relevance grading).
+- **Multi-Role Supervisor Assistant**: Role-based supervisor agents (`doctor` vs `patient`) with strict server-side tool permissions.
+- **Bilingual Triage Checkers**: Dedicated tools for English & Arabic symptom analysis and vital sign evaluation with emergency red-flag warnings.
+- **Calendar Integration**: Doctor schedule automation via an n8n cloud webhook workflow.
+- **FastAPI Backend Services**: OAuth/Bearer token authentication with PBKDF2 hashing, session management, real-time Server-Sent Events (SSE) streaming, debug tracing, and Kubernetes probes.
+- **Dual Frontends**:
+  - **Gastro AI Web App** (`frontweb/gastro-ai`): Premium React 18 + TypeScript + Vite web application with dark glassmorphism UI, Web Speech API voice interaction (TTS/STT), source citation drawers, and configurable API links.
+  - **Streamlit Clinical Inspector** (`frontend/app.py`): Python dashboard with live health diagnostics, multi-session management, SSE streaming, and retrieval trace inspection.
 
----
-
-## Quickstart
-
-Start everything from scratch in six steps:
-
-```bash
-# 0. Prerequisites: Python 3.11+, and Ollama running with the model pulled
-ollama list | grep gemma4:31b-cloud || ollama run gemma4:31b-cloud
-
-# 1. Install dependencies (first time only)
-cd clinical-rag
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 2. (Optional) add guideline PDFs - any number, any illness
-#    cp my_guideline.pdf data/          or: mkdir data/<type> && cp ... data/<type>/
-
-# 3. Ingest: PDFs -> chunks -> ChromaDB + BM25 index (idempotent)
-python -m src.ingestion.ingest
-
-# 4. Start the API
-uvicorn src.api.main:app --reload        # http://localhost:8000/docs
-
-# 5. (Optional) start the Streamlit chat UI
-streamlit run frontend/app.py            # http://localhost:8501
-
-# 6. Try it (login first - demo account: doctor / doctor123, see §21)
-TOKEN=$(curl -s -X POST "http://localhost:8000/auth/login" -H "Content-Type: application/json" \
-  -d '{"username": "doctor", "password": "doctor123"}' | python -c "import sys,json;print(json.load(sys.stdin)['token'])")
-curl -X POST "http://localhost:8000/chat" -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"session_id": "demo-1", "message": "What are the diagnostic criteria for diabetes?"}'
-```
-
-Steps 1–2 are one-time setup; steps 3–5 are what you run every time you
-start the project. Details for each step follow below.
+> ⚠️ **Educational & Research Use Only:** The system generates answers strictly from ingested clinical guideline PDFs in `data/`. It never diagnoses, never prescribes, includes safety disclaimers, and explicitly states when guidelines lack sufficient information.
 
 ---
 
-## 1. Architecture
+## Table of Contents
+
+- [1. System Architecture](#1-system-architecture)
+- [2. Feature Highlights](#2-feature-highlights)
+- [3. Repository Directory Map](#3-repository-directory-map)
+- [4. Technology Stack & Models](#4-technology-stack--models)
+- [5. Environment & Configuration](#5-environment--configuration)
+- [6. Prerequisites & Installation](#6-prerequisites--installation)
+- [7. Ingestion Pipeline](#7-ingestion-pipeline)
+- [8. Quickstart & How to Run](#8-quickstart--how-to-run)
+- [9. Role-Based Access Control (RBAC)](#9-role-based-access-control-rbac)
+- [10. API Endpoint Reference](#10-api-endpoint-reference)
+- [11. Specialized Agent Tools](#11-specialized-agent-tools)
+- [12. Frontend Applications](#12-frontend-applications)
+- [13. Testing & Evaluation](#13-testing--evaluation)
+- [14. Limitations & Safety Disclaimers](#14-limitations--safety-disclaimers)
+
+---
+
+## 1. System Architecture
 
 ```text
-                         HTTP Request
-                              │
-                              ▼
-                          FastAPI
-                              │
-                              ▼
-                       RAG Agent Graph            (LangGraph)
-                              │
-                    ┌─────────┴─────────┐
-                    │                   │
-                    ▼                   ▼
-             Conversation Memory   Query Analyzer (Gemma)
-                    │                   │
-                    │                   ▼
-                    │             Query Rewriter
-                    │                   │
-                    │                   ▼
-                    │             Hybrid Search
-                    │            ┌──────┴──────┐
-                    │            ▼             ▼
-                    │         Vector          BM25
-                    │            │             │
-                    │            └──────┬──────┘
-                    │                   ▼
-                    │              RRF Fusion
-                    │                   │
-                    │                   ▼
-                    │               Reranker
-                    │                   │
-                    │                   ▼
-                    │             Top Documents
-                    │                   │
-                    │                   ▼
-                    │            Relevance Grader (Gemma)
-                    │             /           \
-                    │          GOOD           BAD
-                    │           │              │
-                    │           │         Rewrite Query
-                    │           │              │
-                    │           │              └──→ Hybrid Search
-                    │           │                (max 2 iterations)
-                    │           ▼
-                    │         Ollama (Gemma)
-                    └───────────┤
-                                ▼
-                         Final Answer
-                                │
-                                ▼
-                          Source Citations
+                                  ┌───────────────────────────┐
+                                  │      Client Interface     │
+                                  └─────────────┬─────────────┘
+                                                │
+                     ┌──────────────────────────┴──────────────────────────┐
+                     │                                                     │
+                     ▼                                                     ▼
+      ┌─────────────────────────────┐                       ┌─────────────────────────────┐
+      │  Gastro AI React/Vite App   │                       │  Streamlit Debug Chat UI    │
+      │   (http://localhost:5173)   │                       │   (http://localhost:8501)   │
+      └──────────────┬──────────────┘                       └──────────────┬──────────────┘
+                     │                                                     │
+                     └──────────────────────────┬──────────────────────────┘
+                                                │ HTTP / REST / SSE Stream
+                                                ▼
+                                  ┌───────────────────────────┐
+                                  │    FastAPI Gateway API    │
+                                  │   (http://localhost:8000) │
+                                  └─────────────┬─────────────┘
+                                                │
+                     ┌──────────────────────────┴──────────────────────────┐
+                     │ Authorization (Bearer Token) & Session Manager      │
+                     └──────────────────────────┬──────────────────────────┘
+                                                │
+                                                ▼
+                                  ┌───────────────────────────┐
+                                  │   Role-Based Supervisor   │
+                                  │     (Doctor vs Patient)   │
+                                  └─────────────┬─────────────┘
+                                                │
+         ┌──────────────────────────────────────┼──────────────────────────────────────┐
+         ▼                                      ▼                                      ▼
+┌──────────────────┐                  ┌──────────────────┐                  ┌──────────────────┐
+│ Clinical RAG     │                  │ Signs & Symptoms │                  │ Calendar Webhook │
+│ Graph Tool       │                  │ Checkers         │                  │ Sub-Agent (n8n)  │
+└────────┬─────────┘                  └────────┬─────────┘                  └────────┬─────────┘
+         │                                     │                                     │
+         │ (Self-Improving Loop)               │ (Bilingual Eng/Arab                 │ (Doctor Role Only)
+         ▼                                     │  Triage & Warnings)                 ▼
+┌────────────────────────────────┐             └─────────────────┬───────────────────┘
+│  Conversation Memory           │                               │
+│  Query Analyzer & Rewriter     │                               ▼
+│  Hybrid Search (Vector + BM25) │                        ┌──────────────┐
+│  RRF Fusion & Cross Reranker   │                        │ Ollama LLM   │
+│  Relevance Grader (Score >=.70)│───────────────────────►│ (Gemma 31B) │
+│  Generator with Citations      │                        └──────────────┘
+└────────────────────────────────┘
 ```
 
-Data flow per request:
+### Self-Improving RAG Execution Loop
 
 ```text
-Conversation Memory ──► Query Understanding (rewrite with history)
-Clinical Documents ──► Hybrid Retrieval (vector + BM25 + RRF + rerank)
-                    ──► Relevance Grading ──► (retry if < 0.70, max 2)
-                    ──► Gemma generation with citations
+Original User Query ──► Query Rewriter (Resolves context & adds clinical terms)
+                             │
+                             ▼
+                  Parallel Hybrid Search
+               ┌─────────────┴─────────────┐
+               ▼                           ▼
+        Vector Search (Chroma)      Sparse Search (BM25)
+               │                           │
+               └─────────────┬─────────────┘
+                             ▼
+                Reciprocal Rank Fusion (RRF)
+                             │
+                             ▼
+              Cross-Encoder Reranker (BAAI)
+                             │
+                             ▼
+                  Relevance Grader (Gemma)
+                   /                 \
+        Score >= 0.70               Score < 0.70
+             │                           │
+             ▼                           ▼
+      Response Generator       Rewrite with Feedback
+     (with exact citations)     (Max 2 iterations loop)
 ```
 
-## 2. Installation
+---
 
-Requires Python 3.11+, a running [Ollama](https://ollama.com) server, and
-network access for one-time model downloads (embeddings, reranker, and the
-Ollama cloud model).
+## 2. Feature Highlights
 
-```bash
-cd clinical-rag
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+1. **Self-Improving Retrieval Loop**:
+   - Hybrid Search combining dense vector similarity (`sentence-transformers/all-MiniLM-L6-v2`) and sparse keyword matching (`rank-bm25`).
+   - Merging with Reciprocal Rank Fusion (RRF, $k=60$).
+   - Precision reranking using `BAAI/bge-reranker-v2-m3` Cross-Encoder.
+   - Iterative feedback loop: Structured LLM relevance grader re-triggers query rewriting if relevance score falls below `0.70` (max 2 iterations).
+
+2. **Multi-Role Supervisor Assistant**:
+   - **Doctor Role**: Access to clinical RAG graph, symptoms/signs checkers, calendar webhook (`manage_calendar`), and user directory.
+   - **Patient Role**: Access to clinical RAG graph and bilingual symptoms/signs triage. Calendar management tools are completely omitted server-side to prevent unauthorized scheduling.
+
+3. **Bilingual Clinical Triage Checkers**:
+   - `symptoms_checker`: Parses patient-reported symptoms, extracts structured attributes (location, duration, severity), provides non-diagnostic causes, emergency warnings, and Arabic/English language matching.
+   - `signs_checker`: Evaluates vital signs, lab results, and physical measurements against clinical reference ranges.
+
+4. **Real-Time Streaming & Debug Tracing**:
+   - SSE streaming endpoint (`/chat/stream`) emitting real-time tokens, tool invocation start events, and final responses.
+   - Trace endpoint (`/chat/debug`) exposing query iterations, candidate retrieval numbers, relevance scores, and tool argument call logs.
+
+5. **Production Backend & Authentication**:
+   - Password security with PBKDF2 (100,000 iterations + salt).
+   - CSV user registry (`users.csv`) and persistent bearer token storage (`.tokens_registry.json`).
+   - Thread-safe session manager with automatic stale session eviction (24h TTL).
+   - Kubernetes liveness (`/health/liveness`) and readiness (`/health/readiness`) probes.
+
+---
+
+## 3. Repository Directory Map
+
+```text
+clinical-rag/
+├── README.md                          # Main repository documentation
+├── pyproject.toml                     # Python project metadata
+├── requirements.txt                   # Backend dependencies
+├── users.csv                          # CSV user registry (auto-seeded)
+├── .tokens_registry.json              # Active bearer tokens registry
+├── .env.example                       # Environment template
+├── bm25/                              # Persisted BM25 corpus & index
+│   └── bm25_corpus.pkl
+├── chroma_db/                         # Persistent ChromaDB vector database
+├── data/                              # Guideline PDF storage directory
+│   ├── diabetes_guideline.pdf         # Guideline (type: "diabetes")
+│   ├── osteoporosis.pdf               # Guideline (type: "osteoporosis")
+│   ├── Stomach1.pdf                   # Guideline (type: "Stomach1")
+│   ├── hypertension-in-adults-diagnosis-and-management.pdf
+│   ├── type-1-diabetes-in-adults-diagnosis-and-management.pdf
+│   └── type-2-diabetes-in-adults-management.pdf
+├── frontend/                          # Streamlit Application
+│   └── app.py                         # Streamlit chat & debug dashboard
+├── frontweb/                          # Web Frontend Application
+│   └── gastro-ai/                     # React 18 + Vite + TypeScript application
+│       ├── package.json
+│       ├── vite.config.ts
+│       └── src/
+│           ├── api/                   # API client service & mock handlers
+│           ├── components/            # React UI components (Auth, Chat, Voice, Modal)
+│           ├── context/               # Context providers (Auth, Theme, Chat)
+│           ├── hooks/                 # Web Speech API & UI custom hooks
+│           ├── pages/                 # React router pages
+│           └── styles/                # CSS variable design system
+└── src/                               # Python Backend Source
+    ├── config.py                      # System configuration & hyperparameters
+    ├── agent/                         # Multi-role supervisor & agent tools
+    │   ├── supervisor.py              # Supervisor builder (Doctor vs Patient)
+    │   ├── patient.py                 # Bilingual symptoms_checker & signs_checker
+    │   └── tools.py                   # Calendar n8n webhook tool & time helper
+    ├── api/                           # FastAPI gateway services
+    │   ├── main.py                    # FastAPI application setup & middleware
+    │   ├── auth.py                    # PBKDF2 password security & CLI manager
+    │   ├── schemas.py                 # Pydantic v2 schemas
+    │   ├── session_manager.py         # Session state manager & thread locks
+    │   └── routers/                   # Endpoint routers
+    │       ├── auth.py                # Authentication router
+    │       ├── chat.py                # Chat, streaming SSE & debug router
+    │       └── health.py              # Health check & k8s probes router
+    ├── ingestion/                     # Guideline PDF ingestion pipeline
+    │   └── ingest.py                  # PyMuPDF parser, chunker & indexer
+    ├── memory/                        # Session memory
+    │   └── conversation.py            # Conversational memory buffer
+    └── rag/                           # Agentic RAG implementation
+        ├── bm25_search.py             # Sparse BM25 retrieval
+        ├── embeddings.py              # Dense MiniLM embedding wrapper
+        ├── generator.py               # Citation-bound response generator
+        ├── graph.py                   # LangGraph agentic RAG workflow
+        ├── hybrid_search.py           # Parallel hybrid search & RRF fusion
+        ├── llm.py                     # Ollama LLM client instance wrapper
+        ├── prompts.py                 # System & query rewriting prompts
+        ├── query_rewriter.py          # Clinical query transformer
+        ├── rag_tool.py                # RAG graph wrapped as LangChain tool
+        ├── relevance_grader.py        # Structured relevance evaluator
+        ├── reranker.py                # Cross-Encoder reranker
+        ├── state.py                   # LangGraph state schema
+        └── vector_search.py           # ChromaDB dense retriever
 ```
 
-> On Linux, install the CPU-only torch first to avoid the large CUDA wheel:
-> `pip install torch --index-url https://download.pytorch.org/whl/cpu`
+---
 
-## 3. Ollama setup
+## 4. Technology Stack & Models
 
-Install Ollama and make sure the server is running:
+| Component | Technology / Model | Deployment / Details |
+|---|---|---|
+| **LLM Reasoning & Generation** | `gemma4:31b-cloud` | Served via Ollama Cloud API |
+| **Dense Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` | 384-d dense vectors (local execution) |
+| **Reranker Engine** | `BAAI/bge-reranker-v2-m3` | Deep Cross-Encoder scoring (local execution) |
+| **Vector Database** | ChromaDB | Persistent collection `clinical_guidelines` |
+| **Sparse Keyword Search** | `rank-bm25` | Saved corpus in `bm25/bm25_corpus.pkl` |
+| **Backend Gateway** | FastAPI, Uvicorn, Pydantic v2 | Async REST, SSE streams, JSON schemas |
+| **Authentication & Auth Security** | PBKDF2 (100k iterations), Bearer Tokens | Salted password hashing, bearer auth |
+| **Web Frontend** | React 18, TypeScript, Vite | Modern glassmorphism UI, Web Speech API |
+| **Debug Dashboard** | Streamlit | Real-time SSE streaming, retrieval trace inspector |
+| **Calendar Automation** | n8n Cloud Webhook Workflow | Live calendar sub-agent integration |
+
+---
+
+## 5. Environment & Configuration
+
+Environment configuration is read from `.env` (loaded automatically by [`src/config.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/config.py)).
+
+### Environment Variables Template (`.env`)
 
 ```bash
-ollama serve          # (or start the Ollama app)
+# LLM Configuration
+OLLAMA_MODEL=gemma4:31b-cloud
+OLLAMA_BASE_URL=http://localhost:11434
+
+# Security & Authentication
+TOKEN_TTL_SECONDS=0                              # 0 = tokens never expire automatically
+USERS_CSV_PATH=/home/not/Desktop/ai_hackathon/clinical-rag/users.csv
+
+# Hugging Face Access Token (Optional: Speeds up model downloads)
+HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Web Frontend Configuration (in frontweb/gastro-ai/.env)
+VITE_API_URL=http://localhost:8000
+VITE_USE_MOCK_API=false
 ```
 
-`gemma4:31b-cloud` is an **Ollama cloud model** — it is NOT a fully local
-model. It is served by Ollama through ollama.com, so usage is billed by
-Ollama's cloud tier. Obtain/use it with the standard registry command
-(which auto-pulls if needed):
+### Core Configuration Parameters ([`src/config.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/config.py))
+
+| Parameter | Value | Description |
+|---|---|---|
+| `CHUNK_SIZE` | `1000` | Target character size for PDF document splitting |
+| `CHUNK_OVERLAP` | `200` | Overlap characters between consecutive chunks |
+| `VECTOR_K` | `30` | Top candidates retrieved from ChromaDB vector search |
+| `BM25_K` | `30` | Top candidates retrieved from BM25 keyword search |
+| `RRF_K` | `60` | Constant for Reciprocal Rank Fusion scoring ($1 / (k + rank)$) |
+| `RERANK_TOP_N` | `8` | Top reranked context chunks sent to relevance grader |
+| `MAX_ITERATIONS` | `2` | Maximum query refinement iterations in self-improving loop |
+| `RELEVANCE_THRESHOLD`| `0.70` | Min relevance grade needed to pass to generation step |
+| `MAX_HISTORY_TURNS` | `6` | Recent user/assistant dialogue turns used for query rewriting |
+
+---
+
+## 6. Prerequisites & Installation
+
+### Requirements
+- **Python**: 3.11+
+- **Node.js**: v18+ (for Gastro AI React Web App)
+- **Ollama**: Installed and running
+
+### Step 1: Install Ollama & Pull LLM Model
 
 ```bash
+# Start Ollama service
+ollama serve
+
+# Verify/pull LLM model
 ollama run gemma4:31b-cloud
 ```
 
-You can verify it is available with:
+### Step 2: Set Up Backend Environment
 
 ```bash
-ollama list
+cd clinical-rag
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install Python dependencies
+pip install -r requirements.txt
 ```
 
-## 4. Model setup
+> **CPU PyTorch Tip (Linux):** To avoid downloading CUDA wheels:
+> `pip install torch --index-url https://download.pytorch.org/whl/cpu`
 
-Three models are used; only the LLM needs Ollama:
-
-| Purpose | Model | Runs | First-use download |
-|---|---|---|---|
-| Dense embeddings | `sentence-transformers/all-MiniLM-L6-v2` | local | ~90 MB |
-| Reranker | `BAAI/bge-reranker-v2-m3` | local | ~2.2 GB |
-| LLM (rewrite/grade/generate) | `gemma4:31b-cloud` | Ollama cloud | none (cloud) |
-
-Configuration lives in `.env` (see `.env.example`):
+### Step 3: Set Up React Web Frontend (`frontweb/gastro-ai`)
 
 ```bash
-OLLAMA_MODEL=gemma4:31b-cloud
-OLLAMA_BASE_URL=http://localhost:11434
+cd frontweb/gastro-ai
+npm install
+cp .env.example .env
 ```
 
-### Hugging Face access token (optional)
+---
 
-The two local models are public, so no token is required — but Hugging
-Face throttles anonymous downloads, so setting a token makes the first
-downloads faster. Get a read token at
-[huggingface.co/settings/tokens](https://huggingface.co/settings/tokens),
-then either:
+## 7. Ingestion Pipeline
 
-- add `HF_TOKEN=hf_xxxxxx` to `.env` (project-scoped; `.env` is already
-  loaded by `src/config.py`), or
-- run `hf auth login` once (machine-wide; stored in `~/.cache/huggingface/`).
-
-The embedding model, the reranker and the BM25 index are lazy singletons:
-each is loaded/built **once per process** and reused by every request, so
-repeated searches never reload them (first query pays the load, later
-queries do not).
-
-## 5. Ingestion
+The ingestion pipeline ([`src/ingestion/ingest.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/ingestion/ingest.py)) parses and indexes all PDF files placed under `data/`.
 
 ```bash
 python -m src.ingestion.ingest
 ```
 
-**Not tied to one illness.** Every `*.pdf` under `data/` is ingested — add
-a new guideline at any time and re-run ingestion; the new chunks are added
-incrementally and old ones are untouched.
+### Automatic Guideline Typing
+Each document chunk is assigned a clinical `type` metadata tag:
+- Folder path mapping: `data/hypertension/guideline.pdf` $\rightarrow$ `type: "hypertension"`
+- File stem mapping: `data/diabetes_guideline.pdf` $\rightarrow$ `type: "diabetes"`
+- Plain stem fallback: `data/Stomach1.pdf` $\rightarrow$ `type: "Stomach1"`
 
-Each guideline gets a clinical **`type`** that is stored in every chunk's
-metadata (`{"source", "page", "type"}`) and shown in API sources. The type
-is resolved automatically:
+### Pipeline Characteristics
+- **PyMuPDF Extraction**: Extracts page text with exact page numbering.
+- **Recursive Character Splitting**: 1000 characters per chunk, 200 overlap.
+- **Idempotent Storage**: Hashes `(filename, page, chunk_index)` to prevent duplicate entries on re-runs.
+- **Dual Index Generation**: Updates ChromaDB vector collection `clinical_guidelines` and writes `bm25/bm25_corpus.pkl`.
 
-```text
-data/hypertension/guideline.pdf      -> type "hypertension" (directory name)
-data/diabetes_guideline.pdf          -> type "diabetes"     (filename stem)
-data/covid19.pdf                     -> type "covid19"      (plain stem)
-```
+---
 
-So adding a guideline is just:
+## 8. Quickstart & How to Run
 
-```bash
-cp hypertension_guideline.pdf data/          # or: mkdir data/hypertension && cp ... data/hypertension/
-python -m src.ingestion.ingest
-```
-
-File names must be unique across `data/` (chunk IDs are derived from them);
-the script errors on duplicates.
-
-Ingestion extracts pages with PyMuPDF, splits them (1000 chars, 200
-overlap), stores chunks + embeddings in ChromaDB (`chroma_db/`, collection
-`clinical_guidelines`) — **idempotent**: stable chunk IDs mean re-runs add
-nothing, and chunks stored by older versions are automatically backfilled
-with the `type` field — and persists the chunk corpus for BM25 to
-`bm25/bm25_corpus.pkl`.
-
-To rebuild from scratch: `rm -rf chroma_db bm25` and re-run ingestion.
-
-## 6. BM25 index creation
-
-The BM25 index is built automatically from `bm25/bm25_corpus.pkl` when the
-API starts (once per process), then reused for every request — it is not
-rebuilt per request. Rebuild the corpus by re-running ingestion.
-
-## 7. Running FastAPI
+### 1. Launch FastAPI Backend Gateway
 
 ```bash
-uvicorn src.api.main:app --reload
+cd clinical-rag
+source .venv/bin/activate
+uvicorn src.api.main:app --reload --port 8000
+```
+- API Base URL: `http://localhost:8000`
+- Interactive OpenAPI Docs: `http://localhost:8000/docs`
+
+### 2. Launch Gastro AI React Web Application
+
+```bash
+cd clinical-rag/frontweb/gastro-ai
+npm run dev
+```
+- Web Application URL: `http://localhost:5173`
+
+### 3. Launch Streamlit Debug & Chat Inspector
+
+```bash
+cd clinical-rag
+source .venv/bin/activate
+streamlit run frontend/app.py
+```
+- Streamlit Dashboard URL: `http://localhost:8501`
+
+---
+
+## 9. Role-Based Access Control (RBAC)
+
+RBAC is enforced on the server ([`src/agent/supervisor.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/supervisor.py)).
+
+### Role Matrix
+
+| Role | Guidelines RAG | Symptoms & Signs Checkers | Calendar Integration | View Registered Users |
+|---|---|---|---|---|
+| **Doctor** (`doctor`) | ✅ Yes | ✅ Yes | ✅ Yes (n8n Webhook) | ✅ Yes (`/auth/users`) |
+| **Patient** (`patient`) | ✅ Yes | ✅ Yes (Bilingual Triage) | ❌ Excluded Server-Side | ❌ Excluded |
+
+### Default Demo Accounts (Seeded automatically into `users.csv`)
+- **Doctor Account**: `username: doctor` / `password: doctor123`
+- **Patient Account**: `username: patient` / `password: patient123`
+
+### CLI Account Management ([`src/api/auth.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/api/auth.py))
+
+```bash
+# List all registered accounts
+python -m src.api.auth list
+
+# Add a doctor user account
+python -m src.api.auth add dr_alice doctor --name "Dr. Alice" --password "doctorpassword123"
+
+# Add a patient user account (prompts interactively for password)
+python -m src.api.auth add john_patient patient --name "John Doe"
 ```
 
-The API is then at `http://localhost:8000` (interactive docs at
-`/docs`). Startup loads the RAG agent and both retrieval indexes.
+---
 
-## 8. API endpoints
+## 10. API Endpoint Reference
 
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/health` | GET | Service status (LLM + vector store) — public |
-| `/auth/login` | POST | Exchange credentials for a bearer token (public) |
-| `/auth/logout` | POST | Revoke the presented token |
-| `/chat` | POST | Ask a question; returns answer + sources (needs `Authorization: Bearer <token>`) |
-| `/chat/debug` | POST | Same, plus concise retrieval metadata (needs the header too) |
+### Health & Diagnostics
 
-### `/health`
-
+#### `GET /health`
+Returns system status, active vector count, LLM status, and active session numbers.
 ```json
 {
   "status": "ok",
   "llm": "gemma4:31b-cloud",
-  "vector_store": "connected (86 chunks)"
+  "vector_store": "connected (86 chunks)",
+  "active_sessions": 2,
+  "version": "0.4.0"
 }
 ```
 
-### `/chat`
+#### `GET /health/liveness`
+Kubernetes liveness probe. Returns `{"status": "alive"}`.
 
-The chat endpoints run the **supervisor agent**: one agent whose tools are
-the whole RAG pipeline (`clinical_guidelines`) plus the n8n calendar
-webhook (`manage_calendar`). It routes medical questions to the RAG tool
-and scheduling questions to the calendar sub-agent; each conversation
-session gets its own supervisor with tools bound to that session.
+#### `GET /health/readiness`
+Kubernetes readiness probe. Validates index existence. Returns `{"status": "ready", "llm": true}`.
 
-Request:
+---
 
-```json
-{
-  "session_id": "abc123",
-  "message": "What are the diagnostic criteria for diabetes?"
-}
-```
+### Authentication (`/auth`)
 
-Response:
+#### `POST /auth/signup`
+Registers a new user account and returns an initial bearer token.
+- **Request Body**:
+  ```json
+  {
+    "username": "dr_smith",
+    "password": "Password123!",
+    "name": "Dr. Smith",
+    "role": "doctor"
+  }
+  ```
+- **Response** (`200 OK`):
+  ```json
+  {
+    "token": "a3f8c7...",
+    "username": "dr_smith",
+    "role": "doctor",
+    "name": "Dr. Smith"
+  }
+  ```
 
-```json
-{
-  "session_id": "abc123",
-  "answer": "...",
-  "sources": [
-    {"source": "diabetes_guideline.pdf", "page": 13, "type": "diabetes"}
-  ]
-}
-```
+#### `POST /auth/login`
+Exchanges user credentials for a bearer token.
+- **Request Body**: `{"username": "doctor", "password": "doctor123"}`
+- **Response** (`200 OK`): Returns `token`, `username`, `role`, `name`.
 
-`answer` is the supervisor's final text; `sources` are the citations from
-the RAG tool (empty for calendar-only questions).
+#### `POST /auth/logout`
+Revokes presented bearer token. Requires `Authorization: Bearer <token>`.
 
-### `/chat/debug`
+#### `GET /auth/me`
+Fetches authenticated user profile. Requires `Authorization: Bearer <token>`.
 
-Same request; response adds `original_query`, `iterations` (the RAG
-tool's per-attempt queries, candidate counts and relevance scores) and
-`tool_calls` (the supervisor's tool trace: tool name + args). No
-chain-of-thought is exposed.
+#### `GET /auth/users`
+Lists registered accounts in `users.csv`. Restricted to `doctor` role.
 
-Errors: `400` invalid request (empty message/session), `503` for
-unavailable Ollama or missing indexes, `500` for unexpected failures
-(stack traces are logged server-side, never returned).
+---
 
-### Streamlit frontend
+### Clinical Chat & RAG (`/chat`)
 
-A simple chat UI lives in `frontend/app.py`. With the API running, start it
-from the project root:
+#### `POST /chat`
+Sends a prompt to the supervisor agent. Returns final answer and source citations.
+- **Headers**: `Authorization: Bearer <token>`
+- **Request Body**:
+  ```json
+  {
+    "session_id": "session-101",
+    "message": "What are the diagnostic criteria for Type 2 Diabetes?"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "session_id": "session-101",
+    "answer": "According to the HEARTS-D guideline, Type 2 Diabetes is diagnosed when...",
+    "sources": [
+      {
+        "source": "type-2-diabetes-in-adults-management.pdf",
+        "page": 14,
+        "type": "diabetes"
+      }
+    ],
+    "tools_used_count": 1,
+    "tools_used": ["clinical_guidelines"]
+  }
+  ```
 
-```bash
-streamlit run frontend/app.py
-```
+#### `POST /chat/stream`
+Streams supervisor agent responses in real time via Server-Sent Events (SSE).
+- **Headers**: `Authorization: Bearer <token>`
+- **Emitted Event Types**:
+  - `event: token`: `{"token": "chunk text..."}`
+  - `event: tool_start`: `{"tool": "clinical_guidelines", "args": {...}}`
+  - `event: final`: `{"session_id": "...", "answer": "...", "sources": [...]}`
+  - `event: error`: `{"error": "message"}`
 
-It opens a chat at `http://localhost:8501` with a session-ID field, a
-live `/health` indicator, and a **Debug mode** toggle that shows the
-retrieval process (queries, candidate counts, relevance scores) per
-question. Chat history is kept per session on the API side, so follow-up
-questions like "What about HbA1c?" resolve against earlier turns.
+#### `POST /chat/debug`
+Same as `/chat`, but returns detailed retrieval metadata (per-iteration queries, candidate counts, relevance grades) and tool call history.
 
-## 9. Example curl requests
+#### `GET /chat/sessions`
+Returns active chat sessions for the authenticated user.
 
-First log in to get a token (see §21 for the demo accounts and roles):
+#### `GET /chat/sessions/{session_id}/history`
+Fetches conversation message history for a specific session.
 
-```bash
-TOKEN=$(curl -s -X POST "http://localhost:8000/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"username": "doctor", "password": "doctor123"}' \
-  | python -c "import sys, json; print(json.load(sys.stdin)['token'])")
+#### `DELETE /chat/sessions/{session_id}`
+Clears memory and resets supervisor state for the specified session.
 
-curl -X POST "http://localhost:8000/chat" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{
-    "session_id": "demo-1",
-    "message": "What are the diagnostic criteria for diabetes?"
-  }'
-```
+---
 
-A follow-up that uses conversation memory:
+## 11. Specialized Agent Tools
 
-```bash
-curl -X POST "http://localhost:8000/chat" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{
-    "session_id": "demo-1",
-    "message": "What about HbA1c?"
-  }'
-```
+The platform provides specialized tools ([`src/agent/patient.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/patient.py), [`src/agent/tools.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/tools.py)):
 
-## 10. Memory
+1. **`clinical_guidelines`**:
+   - LangChain tool wrapping the complete agentic RAG pipeline.
+   - Executes hybrid retrieval, RRF fusion, cross-encoder reranking, relevance grading, and citation generation.
 
-Per-session, in-memory conversation memory (`src/memory/conversation.py`).
-Each session keeps its last user/assistant exchanges; the query rewriter
-uses them to resolve references ("this", "that", "HbA1c" after "diabetes
-diagnosis"). Conversation history is **never** written into the vector
-database — memory and document retrieval are separate. The
-`ConversationMemory` class is the only interface the API depends on, so it
-can later be swapped for Redis or PostgreSQL.
+2. **`symptoms_checker(symptoms: str)`**:
+   - Analyzes patient-reported symptoms.
+   - Extracts structured details: symptom type, location, severity, and duration.
+   - Provides safe recommendations and emergency red-flag warnings.
+   - Responds in **English or Arabic** matching the input language.
+   - Appends medical disclaimer: *"This is not medical advice. Consult a doctor."*
 
-## 11. Hybrid search
+3. **`signs_checker(vital: str)`**:
+   - Evaluates vital signs, physical measurements, and laboratory values (e.g. blood pressure, blood glucose, heart rate).
+   - Detects abnormal clinical ranges and provides recommendations.
 
-Two independent retrieval methods run in parallel:
+4. **`manage_calendar(text: str)`**:
+   - Sends calendar queries to the n8n sub-agent webhook (`https://yacine105.app.n8n.cloud/webhook/cal-subagent`).
+   - Doctor role only.
 
-- **Dense** (`src/rag/vector_search.py`): ChromaDB + `all-MiniLM-L6-v2`,
-  `VECTOR_K = 10`
-- **Sparse** (`src/rag/bm25_search.py`): BM25 (`rank-bm25`) over the
-  persisted corpus, `BM25_K = 10`
+5. **`get_current_time()`**:
+   - Returns ISO current timestamp for resolving relative time queries ("today", "tomorrow").
 
-Each returns chunks with a stable `chunk_id`, content, and
-`{source, page}` metadata.
+---
 
-## 12. RRF (Reciprocal Rank Fusion)
+## 12. Frontend Applications
 
-`src/rag/hybrid_search.py` merges both ranked lists:
+### 1. Gastro AI React Web App (`frontweb/gastro-ai`)
+- Built with React 18, TypeScript, and Vite.
+- Dark glassmorphic design system with CSS variables.
+- Voice Interaction: Web Speech API recognition and text-to-speech synthesis with animated voice orb.
+- Configurable environment (`VITE_API_URL` and `VITE_USE_MOCK_API`).
 
-```python
-score(doc) = Σ 1 / (k + rank + 1)     # k = 60
-```
+### 2. Streamlit Clinical Inspector (`frontend/app.py`)
+- Python web application with Streamlit.
+- Features dual-tab login & signup forms.
+- Real-time SSE streaming toggle and debug trace expander.
+- Live API health diagnostics indicator in sidebar.
 
-Duplicates (chunks found by both methods) are merged into one entry with
-the combined score. The result is ~10–20 candidates ordered best-first.
+---
 
-## 13. Reranking
+## 13. Testing & Evaluation
 
-`src/rag/reranker.py` scores the hybrid candidates with the free, local
-cross-encoder `BAAI/bge-reranker-v2-m3` and keeps the top 5. Reranker
-scores are cross-encoder logits, not vector similarity — they are only
-comparable within one query's candidate set.
-
-## 14. Query rewriting
-
-`src/rag/query_rewriter.py` uses Gemma to turn the user's question (plus
-conversation history, plus any grading feedback) into a search-friendly
-retrieval query. It preserves intent, resolves references, adds clinical
-terminology, never answers the question, and returns only the query. If the
-original is already good, it is kept unchanged.
-
-## 15. Relevance grading
-
-`src/rag/relevance_grader.py` asks Gemma whether the reranked context is
-sufficient, with structured output:
-
-```python
-class RelevanceGrade(BaseModel):
-    relevant: bool
-    score: float      # 0-1
-    reason: str
-```
-
-`score >= 0.70` proceeds to generation.
-
-## 16. Self-improving retrieval
-
-```text
-Original Query → Rewriter → Hybrid Search → Rerank → Grade
-    score >= 0.70 → Generate
-    score <  0.70 → Rewrite (with grader feedback) → Search again
-```
-
-`MAX_ITERATIONS = 2` bounds the loop — never infinite. The second attempt
-sees the grader's reason and can target its query accordingly. If evidence
-still grades below threshold, generation runs on the best available chunks
-and must state that the guideline lacks sufficient information. Each
-attempt is recorded in `search_history` (query + relevance score) and
-surfaced by `/chat/debug`.
-
-## Running the tests
-
-Run the whole suite from the project root:
+### Running Pytest Test Suite
 
 ```bash
+# Run all unit and integration tests
 python -m pytest
-```
 
-Or individual files:
+# Ingestion unit tests (Offline, fast)
+python -m pytest tests/test_ingestion.py -v
 
-```bash
-python -m pytest tests/test_ingestion.py -v     # ingestion unit tests (fast, no models)
-python -m pytest tests/test_retrieval.py -s -v  # manual retrieval inspection (no LLM)
-python -m pytest tests/test_dataset.py -s -v    # 8-question evaluation (baseline + agentic)
-python -m pytest tests/test_memory.py -s -v     # conversational memory test
-```
+# Conversational memory tests
+python -m pytest tests/test_memory.py -s -v
 
-Useful flags:
+# Retrieval inspection (Dense, BM25, Hybrid, Reranking without LLM)
+python -m pytest tests/test_retrieval.py -s -v
 
-```bash
-python -m pytest tests/test_dataset.py -s    # -s: print the evaluation report
-python -m pytest -k baseline -q              # run only tests matching "baseline"
-```
-
-Notes:
-
-- **LLM tests skip when Ollama is down** — the agentic evaluation and the
-  memory test are skipped automatically with a clear message if the Ollama
-  server is unreachable. Everything else runs offline.
-- **Cloud usage**: the non-skipped LLM tests make real calls to the Ollama
-  cloud model (`gemma4:31b-cloud`) and take a few minutes; the rest of the
-  suite is local.
-- **First run** downloads the embedding model and the 2.2 GB reranker (see
-  §4 for the optional HF token to speed this up).
-- The test suite assumes ingestion has run (`python -m src.ingestion.ingest`)
-  so `chroma_db/` and `bm25/` exist — except `tests/test_ingestion.py`,
-  which is self-contained.
-
-## 17. Evaluation metrics
-
-```bash
+# Evaluation benchmark (8 clinical questions comparing Baseline vs Agentic RAG)
 python -m pytest tests/test_dataset.py -s -v
 ```
 
-Runs 8 clinical questions through the real retrieval pipeline (hybrid
-search + rerank, no LLM for judging) and reports:
+### Benchmark Metrics (`tests/test_dataset.py`)
+- **Hit Rate@3 / Hit Rate@5**: Fraction of test queries where at least 1 expected evidence chunk appears in top $K$.
+- **Recall@5**: Fraction of expected evidence strings retrieved.
+- **MRR@5 (Mean Reciprocal Rank)**: Reciprocal rank of the first hit.
 
-- **Hit Rate@3 / Hit Rate@5** — fraction of questions with ≥1 chunk
-  containing an expected evidence string in the top K
-- **Recall@5** — fraction of expected evidence strings found
-- **MRR@5** — mean reciprocal rank of the first hit
+---
 
-Two modes are evaluated so you can compare the query-improvement agent:
+## 14. Limitations & Safety Disclaimers
 
-```
-Baseline Hit Rate@5  vs  Agentic Hit Rate@5
-Baseline MRR@5       vs  Agentic MRR@5
-```
-
-The agentic mode needs Ollama and is skipped (with a clear message) when
-it is unavailable. Matching uses normalized text (lowercase, whitespace,
-Unicode ≥/≤, dashes, `mL/minute` vs `ml/min`); the retrieved text is never
-modified. For the full test suite and per-file commands see the
-"Running the tests" section above.
-
-## 18. Limitations
-
-- **Supplied guidelines only**: the system answers from whatever guideline
-  PDFs are in `data/` — no external medical knowledge, no web search. Each
-  answer cites the source file, page and guideline `type`.
-- **Cloud LLM**: `gemma4:31b-cloud` is an Ollama cloud model — responses
-  depend on Ollama's cloud tier, availability, and billing. If Ollama is
-  unreachable the API returns a clear 503.
-- **Retrieval quality** depends on the embedding/reranker models and chunk
-  size; short low-information chunks (title page, table of contents) can
-  occasionally outrank substantive content for some queries.
-- **In-memory memory**: sessions are lost on restart; swap
-  `ConversationMemory` for Redis/PostgreSQL for production.
-- **Not medical advice**: educational/research only. Answers cite the
-  guideline and never replace a clinician. The generator is instructed to
-  state when the guideline is insufficient and to never fabricate
-  citations.
-
-## 19. Calendar agent (ReAct + MCP)
-
-A separate, standalone agent: a **ReAct** (reason + act) loop on the same
-Ollama model (`gemma4:31b-cloud`) whose tools include **Google Calendar
-via MCP**. Ask about your schedule, free time, or ask it to create events.
-
-```bash
-python calendar_agent.py                          # interactive chat
-python calendar_agent.py --prompt "What events do I have today?"
-python calendar_agent.py --mock                   # force the mock calendar
-```
-
-Files:
-
-| File | Purpose |
-|---|---|
-| `calendar_agent.py` | The ReAct agent: `create_agent` (LangChain) + `get_current_time` + MCP calendar tools |
-| `mcp_servers/mock_calendar.py` | Local MOCK MCP calendar server (stdio) mirroring Google's tool surface |
-| `google_calendar_auth.py` | One-time OAuth helper to obtain a Google refresh token |
-
-### Calendar modes
-
-- **Mock (default, no setup):** without Google credentials the agent talks
-  to the local mock server — same tool names, fake in-memory data. Good for
-  testing the agent loop offline.
-- **Real Google Calendar:** connects to Google's hosted Calendar MCP
-  connector (`https://api.google.com/mcp/calendar/v1/sse`) with the same
-  tool names — swapping mock → real is purely configuration.
-
-### Real Google Calendar setup (one time, ~5 minutes)
-
-1. In the [Google Cloud Console](https://console.cloud.google.com): create
-   a project, enable the **Google Calendar API**, create an OAuth client of
-   type **Desktop app** (redirect `http://127.0.0.1:8765`).
-2. Obtain a refresh token:
-
-   ```bash
-   python google_calendar_auth.py --client-id <id> --client-secret <secret>
-   ```
-
-   (approve the consent screen in the browser; add `--write-env` to append
-   the token to `.env` automatically)
-3. Put the credentials in `.env`:
-
-   ```bash
-   GOOGLE_CALENDAR_REFRESH_TOKEN=...
-   GOOGLE_OAUTH_CLIENT_ID=...
-   GOOGLE_OAUTH_CLIENT_SECRET=...
-   ```
-
-   The agent refreshes the access token automatically on every run.
-
-Tools exposed by the calendar MCP (both mock and real): `get_calendar_list`,
-`get_events`, `search_events`, `create_event`, `update_event`,
-`delete_event`, `get_free_busy`.
-
-The MCP connection logic is shared in `src/agent/calendar_mcp.py`
-(`calendar_tools()` async context manager), so any agent can reuse it.
-
-## 20. Supervisor agent (RAG as one tool)
-
-The entire RAG pipeline is wrapped as **one LangChain tool** -
-`clinical_guidelines` in `src/rag/rag_tool.py` - so a supervisor agent can
-use it alongside anything else (here: the n8n calendar webhook). The
-supervisor LLM decides per question which tool(s) to call. **The FastAPI
-`/chat` and `/chat/debug` endpoints run this supervisor** (see §8): each
-conversation session gets its own supervisor instance with tools bound to
-that session, so memory works end to end.
-
-```text
-         supervisor_agent.py (create_agent)
-                     │
-        ┌────────────┼─────────────┐
-        ▼            ▼             ▼
- clinical_guidelines   get_current_time   calendar MCP tools
- (the whole RAG graph  │                    (mock or real Google)
-  as one tool: memory→ │
-  rewrite→hybrid→rerank│
-  →grade→generate→cites)│
-```
-
-```bash
-python supervisor_agent.py                        # interactive
-python supervisor_agent.py --prompt "What are the diagnostic criteria for diabetes?"
-python supervisor_agent.py --prompt "What events do I have today?"
-python supervisor_agent.py --prompt "What are the diagnostic criteria for diabetes, and what events do I have tomorrow?"
-```
-
-Each `clinical_guidelines` call runs the complete RAG pipeline (conversation
-memory, query rewrite, hybrid search, reranking, relevance grading with
-retry, generation) and returns the answer with `[Retrieved sources:
-<file> (<type>, page N)]`, so the supervisor gets cited evidence without
-seeing any internals. Conversation memory persists per session across calls
-in the same process.
-
-Shared agent helpers: `src/agent/calendar_mcp.py` (MCP connection),
-`src/agent/chat.py` (stream printing), `src/agent/tools.py`
-(`get_current_time`). The calendar agent (`calendar_agent.py`) uses the
-same modules.
-
-## 21. Login & roles
-
-The API requires a login for chat. The user registry is a plain CSV
-(`users.csv` at the project root, gitignored) with columns
-`username,name,role,salt,password_hash`; passwords are hashed with PBKDF2
-(stdlib only — no extra dependencies). On the first API start the file is
-seeded automatically with two demo accounts:
-
-| Username | Password | Role | Sees |
-|---|---|---|---|
-| `doctor` | `doctor123` | doctor | Full supervisor: clinical guidelines RAG **and** calendar management (n8n webhook) |
-| `patient` | `patient123` | patient | Clinical guidelines RAG only — the calendar tool is never constructed, so patients cannot schedule even with a crafted request |
-
-### Managing users
-
-```bash
-# Add a user (prompts for the password; use --password to pass it inline)
-python -m src.api.auth add alice doctor --name "Dr. Alice"
-python -m src.api.auth add bob patient
-
-# List users (shows usernames/roles/names, never hashes)
-python -m src.api.auth list
-```
-
-New users are picked up by the running API immediately (the CSV is read fresh
-on every login). Tokens are random hex strings kept in memory — they are lost
-when the API restarts, so clients simply re-login (any old token then 401s).
-
-### How role enforcement works
-
-- `POST /auth/login` returns `{token, username, role, name}`; send it as
-  `Authorization: Bearer <token>` on `/chat` and `/chat/debug`. Missing or
-  invalid tokens get `401` (+ `WWW-Authenticate: Bearer`); an authenticated
-  user hitting a role-restricted endpoint gets `403`.
-- The role decides which supervisor is built: doctor gets
-  `[clinical_guidelines, manage_calendar, get_current_time]`, patient gets
-  `[clinical_guidelines]` only, with a system prompt that politely declines
-  scheduling questions. The split is server-side: there is no calendar tool a
-  patient could invoke.
-- Conversation sessions are keyed `username:session_id`, which also
-  namespaces the process-wide conversation memory and the n8n webhook's
-  `sessionid` — users never share history, even with the same session id.
-
-Known limitation: the n8n webhook URL itself (`WEBHOOK_URL` in
-`src/agent/tools.py`) is unauthenticated — role enforcement protects the API
-surface, not the webhook endpoint.
-
-## Data flow (recap)
-
-```text
-data/*.pdf (any number, typed by location/filename)
-    → PyMuPDF pages → RecursiveCharacterTextSplitter (1000/200)
-    → chunks carry {source, page, type} metadata
-    → ChromaDB (dense) + bm25_corpus.pkl (sparse)
-    → per request: memory → rewrite → vector + BM25 → RRF → rerank
-    → grade → (retry ≤ 2) → Gemma → answer + {source, page, type} citations
-```
+- **Guideline Bound**: System responses are restricted to PDF documents in `data/`. The assistant does not invent medical facts or query external web sources.
+- **Ollama Cloud Dependency**: LLM generation depends on Ollama cloud service availability (`gemma4:31b-cloud`).
+- **Memory Lifetime**: Sessions are stored in-memory (`SessionManager`). Restarting the server clears active session state unless replaced by Redis/PostgreSQL.
+- **Educational Use Warning**: This system is designed exclusively for research and educational purposes. It does not provide medical diagnoses or replace qualified medical professionals.

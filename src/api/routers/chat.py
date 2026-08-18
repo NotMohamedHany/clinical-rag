@@ -124,6 +124,7 @@ async def _run(payload: ChatRequest, request: Request, user: User) -> dict:
     result = await session["agent"].ainvoke({"messages": session["messages"]})
 
     session["messages"] = result["messages"]
+    session_manager.save_session_to_disk(user.username, payload.session_id)
     final_messages = result["messages"]
     answer = final_messages[-1].content if final_messages else ""
 
@@ -235,6 +236,8 @@ async def chat_stream(
                 if isinstance(msg, AIMessage) and msg.content:
                     answer = msg.content
                     break
+
+            session_manager.save_session_to_disk(user.username, payload.session_id)
 
             tool_names = [tc["tool"] for tc in tool_calls]
             final_data = json.dumps(
