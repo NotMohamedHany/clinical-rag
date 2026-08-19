@@ -1,0 +1,30 @@
+{
+  "username": "magic@gmail.com",
+  "session_id": "mobile_magic@gmail.com_1787144079338",
+  "role": "patient",
+  "created_at": "2026-08-19T12:54:46+00:00",
+  "last_active": "2026-08-19T12:55:30+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "السلام عليكم"
+    },
+    {
+      "type": "ai",
+      "content": "وعليكم السلام ورحمة الله وبركاته، كيف يمكنني مساعدتك اليوم؟ هل تعاني من أي أعراض أو لديك استفسار طبي معين؟"
+    },
+    {
+      "type": "human",
+      "content": "قولي مثلا اعراض الضغط"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"The provided clinical guideline does not contain sufficient information to answer this question.\", \"sources\": [], \"retrieval\": [{\"iteration\": 1, \"query\": \"clinical manifestations and symptoms of hypertension high blood pressure\", \"hybrid_results\": 46, \"reranked_results\": 8, \"relevance_score\": 0.3}, {\"iteration\": 2, \"query\": \"clinical manifestations and symptoms of essential hypertension high blood pressure\", \"hybrid_results\": 46, \"reranked_results\": 8, \"relevance_score\": 0.3}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "من المهم جداً معرفة أن ارتفاع ضغط الدم يُسمى غالباً بـ **\"القاتل الصامت\"**، وذلك لأن معظم الأشخاص المصابين به **لا يشعرون بأي أعراض على الإطلاق** لفترات طويلة، حتى بعد وصول الضغط لمستويات عالية.\n\nومع ذلك، في بعض الحالات (خاصة عندما يكون الارتفاع شديداً أو مفاجئاً)، قد تظهر بعض العلامات مثل:\n*   صداع شديد (غالباً في مؤخرة الرأس).\n*   نزيف من الأنف (رعاف) بدون سبب واضح.\n*   دوخة أو دوار.\n*   طنين في الأذنين.\n*   ضبابية في الرؤية.\n*   ضيق في التنفس أو ألم في الصدر (في الحالات المتقدمة جداً).\n\n**نصيحة هامة:**\nالطريقة الوحيدة والمؤكدة لمعرفة ما إذا كنت تعاني من ارتفاع ضغط الدم هي **قياس الضغط باستخدام الجهاز المخصص**. إذا كنت تشعر بأي من هذه الأعراض أو ترغب في الاطمئنان على صحتك، أنصحك بزيارة الطبيب لإجراء فحص دقيق.\n\nهل تود أن أتحقق من مواعيد الطبيب لحجز موعد للفحص؟"
+    }
+  ]
+}

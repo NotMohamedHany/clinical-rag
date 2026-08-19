@@ -36,6 +36,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     method: options.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
       ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,

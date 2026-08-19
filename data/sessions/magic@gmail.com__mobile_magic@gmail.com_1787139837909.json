@@ -1,0 +1,30 @@
+{
+  "username": "magic@gmail.com",
+  "session_id": "mobile_magic@gmail.com_1787139837909",
+  "role": "patient",
+  "created_at": "2026-08-19T11:44:02+00:00",
+  "last_active": "2026-08-19T11:44:50+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "test"
+    },
+    {
+      "type": "ai",
+      "content": "Hello! I am your clinical assistant. I'm here to help you understand your symptoms, check your vital signs, provide evidence-based medical information from clinical guidelines, or help you manage appointments with your doctor.\n\nHow can I assist you today?"
+    },
+    {
+      "type": "human",
+      "content": "هل يوجد مواعيد يوم الخميس"
+    },
+    {
+      "type": "tool",
+      "content": "\n\nنعم، يوجد مواعيد في يوم الخميس 20 أغسطس 2026:\n\n| الموعد | الوقت | التفاصيل |\n|--------|-------|----------|\n| **appointment** | 12:00 ظهراً - 4:00 عصراً | حجز موعد يوم الخميس 20 أغسطس |\n| **Appointment** | 5:00 م - 6:00 م | Scheduled appointment |\n| **حجز جديد** | 5:00 م - 6:30 م | حجز يوم الخميس 20 أغسطس من 5م إلى 6:30م |\n\n⚠️ لاحظ أن هناك **تعارضاً** بين الموعيين: فالـ Appointment و \"حجز جديد\" متزامنان تقريباً في نفس الوقت (5:00 م - 6:00 م و 5:00 م - 6:30 م). هل تريد تعديل أحد هذين الموعيين؟",
+      "name": "manage_calendar"
+    },
+    {
+      "type": "ai",
+      "content": "نعم، تتوفر مواعيد يوم الخميس 20 أغسطس 2026 على النحو التالي:\n\n*   من **12:00 ظهراً** إلى **4:00 عصراً**.\n*   هناك مواعيد أخرى مسجلة في الفترة المسائية، ولكن يرجى الملاحظة أن هناك تعارضاً في المواعيد بين الساعة **5:00 م و 6:30 م**.\n\nهل ترغب في حجز موعد في وقت محدد، أو هل تود مني مساعدتك في تنسيق المواعيد المتعارضة؟"
+    }
+  ]
+}

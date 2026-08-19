@@ -1,0 +1,35 @@
+{
+  "username": "magic@gmail.com",
+  "session_id": "mobile_magic@gmail.com_1787141871507",
+  "role": "patient",
+  "created_at": "2026-08-19T12:17:54+00:00",
+  "last_active": "2026-08-19T12:21:29+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "السلام عليكم"
+    },
+    {
+      "type": "ai",
+      "content": "وعليكم السلام ورحمة الله وبركاته. كيف يمكنني مساعدتك اليوم؟ هل تعاني من أي أعراض أو لديك استفسار صحي تود مناقشته؟"
+    },
+    {
+      "type": "human",
+      "content": "اعراض الانفلونزا اي"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"The provided clinical guideline does not contain sufficient information to answer this question.\", \"sources\": [], \"retrieval\": [{\"iteration\": 1, \"query\": \"influenza clinical manifestations symptoms signs\", \"hybrid_results\": 51, \"reranked_results\": 8, \"relevance_score\": 0.0}, {\"iteration\": 2, \"query\": \"influenza clinical manifestations symptoms signs\", \"hybrid_results\": 51, \"reranked_results\": 8, \"relevance_score\": 0.0}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "tool",
+      "content": "Since you provided a general case (\"influenza symptoms\"), I will analyze the typical presentation of this condition based on your required structure.\n\n### 1. Structured Information (Typical Presentation)\n*   **Symptoms:** High fever, chills, muscle aches (myalgia), fatigue, cough, sore throat, and runny or stuffy nose.\n*   **Location:** Systemic (entire body) and Upper Respiratory Tract.\n*   **Duration:** Sudden onset; usually lasts 1 to 2 weeks.\n*   **Severity:** Moderate to Severe (varies by individual and strain).\n*   **History:** Often seasonal (winter months) or linked to exposure to someone with a similar respiratory infection.\n\n### 2. Possible Causes & Reasoning\n*   **Influenza Virus (Flu):** The most likely cause. It typically presents with a sudden \"hit-by-a-truck\" feeling, high fever, and systemic body aches.\n*   **Common Cold:** Possible, though colds usually have a more gradual onset, milder fever, and less severe body aches.\n*   **COVID-19:** Possible, as symptoms overlap significantly with the flu (fever, cough, fatigue). A test is required to differentiate.\n*   **Other Respiratory Infections:** Such as RSV or bacterial pneumonia (though pneumonia often involves deeper chest pain or productive cough).\n\n### 3. Recommendations\n**Safe Home Care:**\n*   **Rest:** Allow the body to focus energy on fighting the virus.\n*   **Hydration:** Drink plenty of water, broth, or electrolyte drinks to prevent dehydration.\n*   **Fever Management:** Use over-the-counter medications (like acetaminophen or ibuprofen) as directed to reduce fever and aches.\n*   **Isolation:** Stay home to prevent spreading the virus to others.\n\n**When to Seek Emergency Care (Red Flags):**\nSeek immediate medical attention if you experience:\n*   Difficulty breathing or shortness of breath.\n*   Chest pain or pressure.\n*   Confusion or sudden dizziness.\n*   Severe or persistent vomiting.\n*   A fever that does not respond to medication or returns after improving.\n*   Bluish lips or face.\n\n***\n\n**Disclaimer: This is not medical advice. Consult a doctor.**",
+      "name": "symptoms_checker"
+    },
+    {
+      "type": "ai",
+      "content": "تظهر أعراض الإنفلونزا عادةً بشكل مفاجئ وتكون أكثر حدة من نزلات البرد العادية. إليك أبرز الأعراض الشائعة:\n\n**1. الأعراض العامة (الجهازية):**\n*   **حمى عالية:** ارتفاع ملحوظ في درجة الحرارة غالباً ما يصاحبه قشعريرة.\n*   **آلام العضلات:** شعور بأوجاع في الجسم والمفاصل (خمول عام).\n*   **تعب وإرهاق شديد:** شعور بالإنهاك قد يستمر لفترة.\n\n**2. الأعراض التنفسية:**\n*   **سعال:** عادة ما يكون جافاً في البداية.\n*   **التهاب الحلق:** شعور بالألم أو الحكة في الحلق.\n*   **سيلان أو انسداد الأنف:** (أقل شيوعاً من نزلات البرد ولكنها تحدث).\n\n**نصائح للعناية المنزلية:**\n*   **الراحة التامة:** إعطاء الجسم فرصة للتعافي.\n*   **شرب السوائل:** الإكثار من الماء والعصائر والشوربات لتجنب الجفاف.\n*   **خافضات الحرارة:** استخدام الأدوية المتاحة دون وصفة طبية (مثل الباراسيتامول) لتقليل الحرارة وتسكين الآلام، حسب الإرشادات.\n\n**⚠️ متى يجب عليك مراجعة الطبيب فوراً (علامات الخطر)؟**\nيجب التوجه للطوارئ إذا ظهرت أي من العلامات التالية:\n*   صعوبة في التنفس أو ضيق في التنفس.\n*   ألم أو ضغط في الصدر.\n*   دوخة مفاجئة أو حالة من الارتباك والتشوش الذهني.\n*   قيء شديد ومستمر.\n*   حمى لا تنخفض بالأدوية أو تعود للارتفاع بعد أن تحسنت.\n\n**تنبيه:** هذه المعلومات لأغراض استرشادية فقط ولا تغني عن استشارة الطبيب المختص لتشخيص حالتك بدقة. هل تعاني أنت أو أي شخص معك من هذه الأعراض حالياً؟"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "username": "magic@gmail.com",
+  "session_id": "mobile_magic@gmail.com_1787141148725",
+  "role": "patient",
+  "created_at": "2026-08-19T12:05:53+00:00",
+  "last_active": "2026-08-19T12:06:09+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "test"
+    },
+    {
+      "type": "ai",
+      "content": "Hello! I am your clinical assistant. I'm here to help you understand your symptoms, explain medical guidelines, or help you manage appointments with your doctor.\n\nHow can I assist you today?"
+    },
+    {
+      "type": "human",
+      "content": "السلام عليكم"
+    },
+    {
+      "type": "ai",
+      "content": "وعليكم السلام ورحمة الله وبركاته! كيف يمكنني مساعدتك اليوم؟ هل تعاني من أي أعراض صحية، أو تود الاستفسار عن موضوع طبي معين، أو ربما ترغب في حجز موعد مع الطبيب؟"
+    }
+  ]
+}

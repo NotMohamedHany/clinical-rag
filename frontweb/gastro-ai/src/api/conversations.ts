@@ -44,14 +44,43 @@ export const conversationsApi = {
     }
     try {
       const res = await request<FastApiSessionList>('/chat/sessions');
-      return (res.sessions || []).map((s) => ({
-        id: s.session_id,
-        title: `Session ${s.session_id.slice(0, 8)}`,
-        updatedAt: s.last_active,
-        createdAt: s.created_at,
-        messages: [],
-      }));
-    } catch {
+      const sessions = res.sessions || [];
+
+      const conversations = await Promise.all(
+        sessions.map(async (s) => {
+          let messages: ChatMessage[] = [];
+          try {
+            const histRes = await request<FastApiSessionHistory>(`/chat/sessions/${s.session_id}/history`);
+            messages = (histRes.messages || []).map((m) => ({
+              id: crypto.randomUUID(),
+              role: m.role === 'assistant' ? 'ai' : 'user',
+              content: m.content,
+              createdAt: s.created_at || new Date().toISOString(),
+            }));
+          } catch {
+            /* noop */
+          }
+
+          const firstUserMsg = messages.find((m) => m.role === 'user');
+          const title = firstUserMsg
+            ? (firstUserMsg.content.slice(0, 40) + (firstUserMsg.content.length > 40 ? '…' : ''))
+            : `Session ${s.session_id.slice(0, 8)}`;
+
+          return {
+            id: s.session_id,
+            title,
+            updatedAt: s.last_active,
+            createdAt: s.created_at,
+            messages,
+          };
+        })
+      );
+
+      return conversations.sort(
+        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+    } catch (err) {
+      console.error('Failed to fetch user sessions:', err);
       return [];
     }
   },

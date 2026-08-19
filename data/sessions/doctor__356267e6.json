@@ -1,0 +1,22 @@
+{
+  "username": "doctor",
+  "session_id": "356267e6",
+  "role": "doctor",
+  "created_at": "2026-08-19T12:44:33+00:00",
+  "last_active": "2026-08-19T12:44:33+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "What is Helicobacter pylori?"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"The provided clinical guideline does not contain sufficient information to answer this question.\", \"sources\": [], \"retrieval\": [{\"iteration\": 1, \"query\": \"Helicobacter pylori etiology pathogenesis clinical presentation\", \"hybrid_results\": 46, \"reranked_results\": 12, \"relevance_score\": 0.2}, {\"iteration\": 2, \"query\": \"Helicobacter pylori definition etiology pathophysiology characteristics\", \"hybrid_results\": 46, \"reranked_results\": 12, \"relevance_score\": 0.3}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "The provided clinical guidelines do not contain sufficient information to answer this question."
+    }
+  ]
+}
