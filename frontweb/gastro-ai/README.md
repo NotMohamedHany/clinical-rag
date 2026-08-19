@@ -1,4 +1,4 @@
-# Gastro AI — Digestive Health Assistant
+# Medica — Clinical Guidelines Assistant
 
 A premium, production-ready frontend for an AI medical chat assistant focused on
 stomach and digestive system conditions. Built with React + TypeScript + Vite,

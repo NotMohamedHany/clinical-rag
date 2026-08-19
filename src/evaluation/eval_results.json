@@ -1,0 +1,1472 @@
+{
+  "metadata": {
+    "dataset": "clinical_rag_test_set.json",
+    "total_questions_evaluated": 40,
+    "timestamp": "2026-08-18 22:41:03"
+  },
+  "summary": {
+    "total_questions": 40,
+    "overall_metrics": {
+      "concept_coverage": 0.8642,
+      "perfect_concept_coverage_rate": 0.65,
+      "source_hit_rate": 1.0,
+      "semantic_similarity": 0.7244,
+      "token_f1": 0.3134,
+      "relevance_pass_rate": 0.975,
+      "avg_relevance_score": 0.9788,
+      "insufficient_evidence_rate": 0.025,
+      "avg_search_iterations": 1.05,
+      "avg_latency_seconds": 36.19
+    },
+    "category_breakdown": {
+      "direct": {
+        "count": 17,
+        "concept_coverage": 0.8284,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.6973,
+        "token_f1": 0.3226,
+        "relevance_pass_rate": 0.9412
+      },
+      "conditional": {
+        "count": 8,
+        "concept_coverage": 0.9437,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.7239,
+        "token_f1": 0.2619,
+        "relevance_pass_rate": 1.0
+      },
+      "clinical_reasoning": {
+        "count": 4,
+        "concept_coverage": 0.95,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.7765,
+        "token_f1": 0.4743,
+        "relevance_pass_rate": 1.0
+      },
+      "comparison": {
+        "count": 3,
+        "concept_coverage": 1.0,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.8475,
+        "token_f1": 0.2985,
+        "relevance_pass_rate": 1.0
+      },
+      "list": {
+        "count": 1,
+        "concept_coverage": 1.0,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.7525,
+        "token_f1": 0.2632,
+        "relevance_pass_rate": 1.0
+      },
+      "safety": {
+        "count": 3,
+        "concept_coverage": 0.6111,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.702,
+        "token_f1": 0.2264,
+        "relevance_pass_rate": 1.0
+      },
+      "negative_recommendation": {
+        "count": 2,
+        "concept_coverage": 0.65,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.7479,
+        "token_f1": 0.2444,
+        "relevance_pass_rate": 1.0
+      },
+      "why_question": {
+        "count": 1,
+        "concept_coverage": 1.0,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.6795,
+        "token_f1": 0.4103,
+        "relevance_pass_rate": 1.0
+      },
+      "timing": {
+        "count": 1,
+        "concept_coverage": 1.0,
+        "source_hit_rate": 1.0,
+        "semantic_similarity": 0.6479,
+        "token_f1": 0.3232,
+        "relevance_pass_rate": 1.0
+      }
+    }
+  },
+  "itemized_results": [
+    {
+      "id": "diabetes_01",
+      "category": "direct",
+      "question": "What fasting plasma glucose level is diagnostic of diabetes?",
+      "expected_answer": "Fasting venous or capillary plasma glucose >= 7.0 mmol/L (126 mg/dL).",
+      "generated_answer": "Answer:\nA fasting venous or capillary plasma glucose level of \u22657.0 mmol/L (126 mg/dL) is diagnostic of diabetes.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "7.0 mmol/L",
+        "126 mg/dL",
+        "fasting plasma glucose"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8722,
+      "token_precision": 0.4545,
+      "token_recall": 0.8333,
+      "token_f1": 0.5882,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 47.326
+    },
+    {
+      "id": "diabetes_02",
+      "category": "direct",
+      "question": "What HbA1c value is used as a diagnostic cutoff for diabetes?",
+      "expected_answer": "HbA1c 6.5% (48 mmol/mol).",
+      "generated_answer": "Answer:\nThe diagnostic cut-off value for HbA1c used to diagnose diabetes is 6.5% (48 mmol/mol).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "6.5%",
+        "48 mmol/mol"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.716,
+      "token_precision": 0.2381,
+      "token_recall": 1.0,
+      "token_f1": 0.3846,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 40.347
+    },
+    {
+      "id": "diabetes_03",
+      "category": "conditional",
+      "question": "When can a random plasma glucose of 11.1 mmol/L or higher be used to diagnose diabetes?",
+      "expected_answer": "When the person has symptoms of diabetes.",
+      "generated_answer": "Answer:\nA random plasma glucose of \u226511.1 mmol/L (200 mg/dL) can be used to diagnose diabetes only in the presence of symptoms.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        ">=11.1 mmol/L",
+        "200 mg/dL",
+        "symptoms"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6996,
+      "token_precision": 0.0769,
+      "token_recall": 0.2857,
+      "token_f1": 0.1212,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 39.841
+    },
+    {
+      "id": "diabetes_04",
+      "category": "clinical_reasoning",
+      "question": "If an asymptomatic person has a diagnostic-range glucose result, what should be done?",
+      "expected_answer": "Repeat the diagnostic test on a subsequent day, preferably using the same test.",
+      "generated_answer": "Answer:\nFor asymptomatic people with a diagnostic-range glucose result, the test should be repeated to confirm the diagnosis, preferably using the same test, as soon as practicable on a subsequent day.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "asymptomatic",
+        "repeat",
+        "subsequent day",
+        "same test"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7287,
+      "token_precision": 0.2581,
+      "token_recall": 0.6667,
+      "token_f1": 0.3721,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 48.022
+    },
+    {
+      "id": "diabetes_05",
+      "category": "comparison",
+      "question": "What are the main differences between Type 1 and Type 2 diabetes?",
+      "expected_answer": "Type 1 is associated with beta-cell destruction and absolute insulin deficiency; Type 2 is characterized by varying beta-cell dysfunction and insulin resistance.",
+      "generated_answer": "Answer:\nThe main differences between Type 1 and Type 2 diabetes are as follows:\n\n*   **Description and Cause:**\n    *   **Type 1 diabetes** is characterized by absolute insulin deficiency and beta-cell destruction, which is mostly immune-mediated (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 11).\n    *   **Type 2 diabetes** is the most common type and involves insulin resistance and various degrees of beta-cell dysfunction; it is commonly associated with obesity and overweight (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 11).\n*   **Onset and Presentation:**\n    *   **Type 1 diabetes** typically has an onset in children and young adults and is more likely to present with symptoms (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 12).\n    *   **Type 2 diabetes** symptoms are often absent or not severe due to the slow pace of worsening hyperglycaemia, which can lead to a significant percentage of cases (30% to 80%, depending on the country) remaining undiagnosed (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 12).\n*   **Clinical Differentiation:**\n    *   While age and body mass index (BMI) have been used to differentiate the two, these features are becoming less useful on their own because the average BMI in people with type 1 diabetes is increasing and the age of diagnosis for type 2 diabetes is decreasing (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 51).\n    *   Diabetes-specific autoantibody testing is encouraged at diagnosis to avoid misclassification (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 52).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 11\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 12\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 51\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 52",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "Type 1",
+        "beta-cell destruction",
+        "absolute insulin deficiency",
+        "Type 2",
+        "insulin resistance"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8101,
+      "token_precision": 0.124,
+      "token_recall": 0.8824,
+      "token_f1": 0.2174,
+      "relevance_ok": true,
+      "relevance_score": 0.95,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 38.313
+    },
+    {
+      "id": "diabetes_06",
+      "category": "direct",
+      "question": "What does HbA1c represent when monitoring glycaemic control?",
+      "expected_answer": "It reflects average plasma glucose over approximately the preceding 8\u201312 weeks.",
+      "generated_answer": "Answer:\nWhen monitoring glycaemic control, glycated haemoglobin (HbA1c) provides a measure of the average plasma glucose over the preceding 8 to 12 weeks.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 17\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 27",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.5,
+      "matched_concepts": [
+        "average plasma glucose"
+      ],
+      "missing_concepts": [
+        "8\u201312 weeks"
+      ],
+      "semantic_similarity": 0.7386,
+      "token_precision": 0.25,
+      "token_recall": 0.6364,
+      "token_f1": 0.359,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 31.081
+    },
+    {
+      "id": "diabetes_07",
+      "category": "direct",
+      "question": "What HbA1c target can the majority of patients with Type 2 diabetes be expected to aim for?",
+      "expected_answer": "Approximately 7.0% (53 mmol/mol), with individualization when appropriate.",
+      "generated_answer": "Answer:\nThe majority of patients with Type 2 diabetes can be expected to aim for an HbA1c of 7.0% (53 mmol/mol).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 17",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.6666666666666666,
+      "matched_concepts": [
+        "7.0%",
+        "53 mmol/mol"
+      ],
+      "missing_concepts": [
+        "individualized"
+      ],
+      "semantic_similarity": 0.6616,
+      "token_precision": 0.1538,
+      "token_recall": 0.5,
+      "token_f1": 0.2353,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 37.159
+    },
+    {
+      "id": "diabetes_08",
+      "category": "direct",
+      "question": "At what plasma glucose level is hypoglycaemia most frequently defined?",
+      "expected_answer": "At or below 3.9 mmol/L (70 mg/dL).",
+      "generated_answer": "Answer:\nHypoglycaemia is most frequently defined at a plasma glucose level of \u22643.9 mmol/L (70 mg/dL).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 18",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "3.9 mmol/L",
+        "70 mg/dL"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6757,
+      "token_precision": 0.2727,
+      "token_recall": 0.75,
+      "token_f1": 0.4,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 37.645
+    },
+    {
+      "id": "diabetes_09",
+      "category": "comparison",
+      "question": "What distinguishes DKA from HHS in terms of glucose and ketones?",
+      "expected_answer": "DKA is associated with high glucose and positive urine ketones, while HHS generally has much higher glucose and negative or weakly positive ketones.",
+      "generated_answer": "Answer:\nDKA and HHS are distinguished by the following biochemical characteristics:\n\n*   **Plasma glucose level:** DKA is characterized by a level $\\ge$13.9 mmol/L (250 mg/dL), though it is occasionally lower. HHS is characterized by a level $\\ge$33.3 mmol/L (600 mg/dL).\n*   **Urine ketones:** DKA is positive, whereas HHS is negative or weakly positive.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 19",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "DKA",
+        "HHS",
+        "ketones",
+        "glucose"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8564,
+      "token_precision": 0.2619,
+      "token_recall": 0.55,
+      "token_f1": 0.3548,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 39.92
+    },
+    {
+      "id": "diabetes_10",
+      "category": "list",
+      "question": "What major microvascular complications can result from longstanding poorly controlled diabetes?",
+      "expected_answer": "Diabetic retinopathy, nephropathy, neuropathy, and diabetic foot complications.",
+      "generated_answer": "Answer:\nLongstanding diabetes with uncontrolled blood glucose levels can lead to multiple organ damage, resulting in the following major microvascular complications:\n*   Diabetic retinopathy\n*   Nephropathy\n*   Neuropathy\n*   Diabetic foot complications\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 20",
+      "expected_source": "diabetes_guideline.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "retinopathy",
+        "nephropathy",
+        "neuropathy",
+        "diabetic foot"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7525,
+      "token_precision": 0.1613,
+      "token_recall": 0.7143,
+      "token_f1": 0.2632,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 37.015
+    },
+    {
+      "id": "stomach_01",
+      "category": "direct",
+      "question": "What symptoms can broadly be included under dyspepsia in primary care?",
+      "expected_answer": "Recurrent epigastric pain, heartburn or acid regurgitation, with or without bloating, nausea or vomiting.",
+      "generated_answer": "Answer:\nIn unselected people in primary care, dyspepsia is defined broadly to include people with:\n* Recurrent epigastric pain\n* Heartburn\n* Acid regurgitation\n* Bloating, nausea, or vomiting (with or without)\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 13\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "epigastric pain",
+        "heartburn",
+        "acid regurgitation",
+        "bloating",
+        "nausea",
+        "vomiting"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6462,
+      "token_precision": 0.3667,
+      "token_recall": 0.9167,
+      "token_f1": 0.5238,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 37.736
+    },
+    {
+      "id": "stomach_02",
+      "category": "direct",
+      "question": "How long should a patient stop taking a PPI before an H. pylori breath test or stool antigen test?",
+      "expected_answer": "Allow a 2-week PPI washout before testing.",
+      "generated_answer": "Answer:\nA 2-week washout period should be left after proton pump inhibitor (PPI) use before testing for Helicobacter pylori with a stool antigen test or a breath test.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 8\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.6666666666666666,
+      "matched_concepts": [
+        "PPI",
+        "washout"
+      ],
+      "missing_concepts": [
+        "2 weeks"
+      ],
+      "semantic_similarity": 0.7987,
+      "token_precision": 0.1562,
+      "token_recall": 0.7143,
+      "token_f1": 0.2564,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 36.754
+    },
+    {
+      "id": "stomach_03",
+      "category": "direct",
+      "question": "What empirical treatment does NICE recommend for people with dyspepsia?",
+      "expected_answer": "A full-dose PPI for 4 weeks.",
+      "generated_answer": "Answer:\nFor people with dyspepsia, NICE recommends the following empirical treatments:\n- Offer empirical full-dose PPI therapy for 4 weeks (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14).\n- Offer H pylori 'test and treat' (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14).\n- If there is an inadequate response to a PPI, offer H2 receptor antagonist (H2RA) therapy (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14).\n- If H pylori has been excluded and symptoms persist, offer either an H2RA or a low-dose PPI for 4 weeks (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 17).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 17",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "full-dose PPI",
+        "4 weeks"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6506,
+      "token_precision": 0.102,
+      "token_recall": 0.8333,
+      "token_f1": 0.1818,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 2,
+      "latency_seconds": 56.487
+    },
+    {
+      "id": "stomach_04",
+      "category": "conditional",
+      "question": "What can be offered if dyspepsia does not respond adequately to a PPI?",
+      "expected_answer": "An H2 receptor antagonist can be offered.",
+      "generated_answer": "Answer:\nIf there is an inadequate response to a PPI for people with dyspepsia, H2 receptor antagonist (H2RA) therapy can be offered.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 14",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "H2 receptor antagonist",
+        "PPI",
+        "inadequate response"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7242,
+      "token_precision": 0.2593,
+      "token_recall": 1.0,
+      "token_f1": 0.4118,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 28.913
+    },
+    {
+      "id": "stomach_05",
+      "category": "direct",
+      "question": "What initial treatment does NICE recommend for GORD?",
+      "expected_answer": "A full-dose PPI for 4 or 8 weeks.",
+      "generated_answer": "Answer:\nFor people with GORD, NICE recommends offering a full-dose PPI for 4 or 8 weeks. Additionally, for those with severe oesophagitis, a full-dose PPI should be offered for 8 weeks, considering clinical circumstances and the person's preference.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 15",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "GORD",
+        "full-dose PPI",
+        "4 weeks",
+        "8 weeks"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8092,
+      "token_precision": 0.2222,
+      "token_recall": 1.0,
+      "token_f1": 0.3636,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 26.632
+    },
+    {
+      "id": "stomach_06",
+      "category": "direct",
+      "question": "How long should full-dose PPI therapy generally be given to heal severe oesophagitis?",
+      "expected_answer": "8 weeks.",
+      "generated_answer": "Answer:\nTo heal severe oesophagitis, people should be offered a full-dose PPI for 8 weeks, taking into account their clinical circumstances and preference.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 8\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 15",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "severe oesophagitis",
+        "8 weeks",
+        "full-dose PPI"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.5141,
+      "token_precision": 0.0357,
+      "token_recall": 0.5,
+      "token_f1": 0.0667,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 32.506
+    },
+    {
+      "id": "stomach_07",
+      "category": "conditional",
+      "question": "What treatment should be offered to a patient with peptic ulcer disease who tests positive for H. pylori?",
+      "expected_answer": "H. pylori eradication therapy.",
+      "generated_answer": "Answer:\nFor a patient with peptic ulcer disease who tests positive for H. pylori, the following treatment should be offered:\n\n*   **H. pylori eradication therapy:** This should be offered to people with peptic ulcer disease who have tested positive for H. pylori (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 9 and 16).\n*   **First-line eradication treatment:** This consists of a 7-day, twice-daily course of treatment with a PPI, amoxicillin, and either clarithromycin or metronidazole. The regimen with the lowest acquisition cost should be chosen, taking into account previous exposure to metronidazole or clarithromycin (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 18).\n*   **Special considerations for NSAID users:** For those using NSAIDs with a diagnosed peptic ulcer, NSAID use should be stopped where possible. These patients should be offered H2 receptor antagonist (H2RA) therapy or full-dose PPI for 8 weeks and, if H. pylori is present, subsequently offered eradication therapy (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 9 and 16).\n*   **Follow-up:** People with peptic ulcer (duodenal or gastric) and H. pylori should be offered retesting for H. pylori 6 to 8 weeks after beginning treatment, depending on the size of the lesion (/home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 9 and 16).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 9\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 16\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 18",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "peptic ulcer",
+        "H. pylori",
+        "eradication therapy"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6897,
+      "token_precision": 0.0319,
+      "token_recall": 0.75,
+      "token_f1": 0.0612,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 37.678
+    },
+    {
+      "id": "stomach_08",
+      "category": "direct",
+      "question": "What first-line H. pylori eradication regimen is described in the guideline?",
+      "expected_answer": "A 7-day twice-daily regimen consisting of a PPI, amoxicillin, and either clarithromycin or metronidazole, considering previous antibiotic exposure.",
+      "generated_answer": "Answer:\nThe first-line treatment for people who test positive for H. pylori is a 7-day, twice-daily course of treatment consisting of:\n*   A PPI (proton pump inhibitor)\n*   Amoxicillin\n*   Either clarithromycin or metronidazole\n\nThe guideline recommends choosing the regimen with the lowest acquisition cost and taking into account previous exposure to metronidazole or clarithromycin.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 18",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.8333333333333334,
+      "matched_concepts": [
+        "twice daily",
+        "PPI",
+        "amoxicillin",
+        "clarithromycin",
+        "metronidazole"
+      ],
+      "missing_concepts": [
+        "7 days"
+      ],
+      "semantic_similarity": 0.7487,
+      "token_precision": 0.2917,
+      "token_recall": 0.8235,
+      "token_f1": 0.4308,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 29.669
+    },
+    {
+      "id": "stomach_09",
+      "category": "safety",
+      "question": "A patient presents with dyspepsia and significant acute gastrointestinal bleeding. What should happen?",
+      "expected_answer": "Immediate same-day referral to a specialist.",
+      "generated_answer": "Answer:\nPeople presenting with dyspepsia together with significant acute gastrointestinal bleeding should be referred immediately (on the same day) to a specialist.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 8\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 13",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "acute gastrointestinal bleeding",
+        "immediate",
+        "same day",
+        "specialist"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6826,
+      "token_precision": 0.1111,
+      "token_recall": 0.5,
+      "token_f1": 0.1818,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 32.114
+    },
+    {
+      "id": "stomach_10",
+      "category": "conditional",
+      "question": "When should referral to a specialist service be considered for people with gastro-oesophageal symptoms?",
+      "expected_answer": "For symptoms that are non-responsive to treatment or unexplained, suspected GORD being considered for surgery, or H. pylori that has not responded to second-line eradication therapy.",
+      "generated_answer": "Answer:\nReferral to a specialist service should be considered for people:\n* Of any age with gastro-oesophageal symptoms that are unexplained or non-responsive to treatment. \"Unexplained\" is defined as symptoms or signs that have not led to a diagnosis by a primary care healthcare professional following initial assessment (including examination, history, and any primary care investigations).\n* With suspected GORD who are considering surgery.\n* With H pylori that has not responded to second-line eradication therapy.\n\nAdditionally, for people presenting with dyspepsia and significant acute gastrointestinal bleeding, they should be referred to a specialist immediately (on the same day).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 8\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 9\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/Stomach1.pdf, page 21",
+      "expected_source": "Stomach1.pdf",
+      "retrieved_sources": [
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf",
+        "Stomach1.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.8,
+      "matched_concepts": [
+        "non-responsive",
+        "unexplained",
+        "surgery",
+        "second-line"
+      ],
+      "missing_concepts": [
+        "H. pylori"
+      ],
+      "semantic_similarity": 0.7244,
+      "token_precision": 0.2308,
+      "token_recall": 0.8182,
+      "token_f1": 0.36,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 34.137
+    },
+    {
+      "id": "t1_01",
+      "category": "clinical_reasoning",
+      "question": "Can a single clinical feature such as age or BMI reliably distinguish Type 1 from Type 2 diabetes in adults?",
+      "expected_answer": "No. No single clinical feature has sufficient predictive value by itself, and age and BMI should not be used in isolation.",
+      "generated_answer": "Answer:\nNo, a single clinical feature cannot reliably distinguish between Type 1 and Type 2 diabetes in adults. Evidence shows that no single clinical feature has sufficient predictive value to make a diagnosis by itself, and the guideline explicitly states that age or BMI should not be used alone to diagnose or exclude type 1 diabetes in adults.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 7\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 51",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.8,
+      "matched_concepts": [
+        "no",
+        "single clinical feature",
+        "age",
+        "BMI"
+      ],
+      "missing_concepts": [
+        "not in isolation"
+      ],
+      "semantic_similarity": 0.7628,
+      "token_precision": 0.3673,
+      "token_recall": 0.9,
+      "token_f1": 0.5217,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 33.544
+    },
+    {
+      "id": "t1_02",
+      "category": "direct",
+      "question": "When should diabetes-specific autoantibody testing be performed in adults with suspected Type 1 diabetes?",
+      "expected_answer": "At diagnosis or presentation, because the false-negative rate is lowest then.",
+      "generated_answer": "Answer:\nDiabetes-specific autoantibody testing should be performed in adults with an initial diagnosis of type 1 diabetes (Source: /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 7). The guideline clarifies that this testing is appropriate for people with suspected type 1 diabetes and is best used at the time of presentation rather than later at a clinical review, as the tests are more accurate and cost-effective at that time (Source: /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 52).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 7\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 52",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.75,
+      "matched_concepts": [
+        "autoantibody",
+        "diagnosis",
+        "presentation"
+      ],
+      "missing_concepts": [
+        "false-negative"
+      ],
+      "semantic_similarity": 0.5031,
+      "token_precision": 0.0943,
+      "token_recall": 0.4545,
+      "token_f1": 0.1562,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 33.162
+    },
+    {
+      "id": "t1_03",
+      "category": "direct",
+      "question": "How can the false-negative rate of diabetes-specific autoantibody testing be reduced?",
+      "expected_answer": "By performing quantitative tests for two different diabetes-specific autoantibodies, with at least one being positive.",
+      "generated_answer": "Answer:\nThe false-negative rate of diabetes-specific autoantibody testing can be reduced by performing quantitative tests for two different diabetes-specific autoantibodies, provided that at least one of them is positive.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 7",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "two",
+        "different autoantibodies",
+        "quantitative",
+        "positive"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.812,
+      "token_precision": 0.4062,
+      "token_recall": 0.8667,
+      "token_f1": 0.5532,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 36.927
+    },
+    {
+      "id": "t1_04",
+      "category": "negative_recommendation",
+      "question": "Should serum C-peptide routinely be measured to confirm Type 1 diabetes in adults?",
+      "expected_answer": "No. It should not routinely be measured for confirmation. If autoantibodies are negative and classification remains uncertain, non-fasting C-peptide with paired blood glucose can be considered.",
+      "generated_answer": "Answer:\nNo, serum C-peptide should not be routinely measured to confirm type 1 diabetes in adults.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 7",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.5,
+      "matched_concepts": [
+        "no",
+        "not routinely",
+        "C-peptide"
+      ],
+      "missing_concepts": [
+        "autoantibodies negative",
+        "uncertain",
+        "paired blood glucose"
+      ],
+      "semantic_similarity": 0.7697,
+      "token_precision": 0.2857,
+      "token_recall": 0.24,
+      "token_f1": 0.2609,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 38.65
+    },
+    {
+      "id": "t1_05",
+      "category": "safety",
+      "question": "What is the important harm if Type 1 diabetes is misdiagnosed as Type 2?",
+      "expected_answer": "The person may not receive insulin and may subsequently develop diabetic ketoacidosis.",
+      "generated_answer": "Answer:\nIf type 1 diabetes is misdiagnosed as type 2, the person may not receive insulin treatment, which could lead to a subsequent risk of diabetic ketoacidosis.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 51",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.5,
+      "matched_concepts": [
+        "insulin",
+        "diabetic ketoacidosis"
+      ],
+      "missing_concepts": [
+        "misdiagnosis",
+        "DKA"
+      ],
+      "semantic_similarity": 0.7737,
+      "token_precision": 0.2581,
+      "token_recall": 0.7273,
+      "token_f1": 0.381,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 34.762
+    },
+    {
+      "id": "t1_06",
+      "category": "direct",
+      "question": "How frequently should HbA1c generally be measured in adults with Type 1 diabetes?",
+      "expected_answer": "Every 3\u20136 months, with more frequent measurement considered if glucose control is changing rapidly.",
+      "generated_answer": "Answer:\nIn adults with type 1 diabetes, HbA1c levels should generally be measured every 3 to 6 months. However, measuring HbA1c levels more frequently should be considered if blood glucose control is suspected to be changing rapidly, such as when the HbA1c level has risen unexpectedly above a previously sustained target.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 17",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.6666666666666666,
+      "matched_concepts": [
+        "more frequent",
+        "changing rapidly"
+      ],
+      "missing_concepts": [
+        "3\u20136 months"
+      ],
+      "semantic_similarity": 0.7872,
+      "token_precision": 0.1837,
+      "token_recall": 0.6429,
+      "token_f1": 0.2857,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 33.577
+    },
+    {
+      "id": "t1_07",
+      "category": "direct",
+      "question": "What HbA1c target should adults with Type 1 diabetes generally be supported to aim for?",
+      "expected_answer": "48 mmol/mol (6.5%) or lower, provided this does not result in problematic hypoglycaemia and is appropriate for the individual.",
+      "generated_answer": "Answer:\nAdults with type 1 diabetes should generally be supported to aim for a target HbA1c level of 48 mmol/mol (6.5%) or lower to minimize the risk of long-term vascular complications. However, an individualised HbA1c target should be agreed upon with each adult, taking into account factors such as their occupation, comorbidities, aspirations, daily activities, history of hypoglycaemia, and likelihood of complications. Additionally, it must be ensured that aiming for the HbA1c target does not result in problematic hypoglycaemia.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 18",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "48 mmol/mol",
+        "6.5%",
+        "hypoglycaemia"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7261,
+      "token_precision": 0.2029,
+      "token_recall": 0.7368,
+      "token_f1": 0.3182,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 29.923
+    },
+    {
+      "id": "t1_08",
+      "category": "direct",
+      "question": "What types of continuous glucose monitoring should adults with Type 1 diabetes be offered?",
+      "expected_answer": "A choice between real-time CGM and intermittently scanned CGM, based on individual preferences, needs, characteristics and device functionality.",
+      "generated_answer": "Answer:\nAdults with type 1 diabetes should be offered a choice between real-time continuous glucose monitoring (rtCGM) or intermittently scanned continuous glucose monitoring (isCGM, commonly referred to as 'flash'). This choice should be based on the functionality of the available devices as well as the individual's characteristics, needs, and preferences.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 18",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "real-time CGM",
+        "intermittently scanned CGM",
+        "choice",
+        "individual"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7146,
+      "token_precision": 0.2553,
+      "token_recall": 0.75,
+      "token_f1": 0.381,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 29.425
+    },
+    {
+      "id": "t1_09",
+      "category": "safety",
+      "question": "What should a person with Type 1 diabetes who can safely swallow use to manage hypoglycaemia?",
+      "expected_answer": "A fast-acting form of glucose.",
+      "generated_answer": "Answer:\nFor adults with type 1 diabetes who can swallow, a fast-acting form of glucose is needed to manage hypoglycaemic symptoms or signs (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 31).\n\nManagement includes the ingestion of carbohydrate as follows:\n*   The person should ingest 15\u201320 g of glucose.\n*   If glucose is unavailable, they should use oral carbohydrate containing 15\u201320 g of rapidly absorbing forms of glucose, such as 1\u20132 teaspoons of sugar, 5\u20136 hard candies, a cup of milk, or a sugar-sweetened soft drink (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 19).\n*   If rapidly absorbing glucose is not available, any foods containing carbohydrate (e.g., potato, rice, bread) can be substituted (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 19).\n*   This should be followed by a small meal containing complex carbohydrate (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 19).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 31\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 19",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.3333333333333333,
+      "matched_concepts": [
+        "fast-acting glucose"
+      ],
+      "missing_concepts": [
+        "hypoglycaemia",
+        "safely swallow"
+      ],
+      "semantic_similarity": 0.6496,
+      "token_precision": 0.0617,
+      "token_recall": 1.0,
+      "token_f1": 0.1163,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 38.125
+    },
+    {
+      "id": "t1_10",
+      "category": "conditional",
+      "question": "When should ketone monitoring be considered for adults with Type 1 diabetes?",
+      "expected_answer": "As part of sick-day rules, using blood or urine ketone monitoring to help self-manage hyperglycaemia and reduce the risk of DKA.",
+      "generated_answer": "Answer:\nKetone monitoring for adults with type 1 diabetes should be considered in the following situations:\n\n*   **Self-management:** As part of 'sick-day rules' to assist with the self-management of hyperglycaemia (blood or urine monitoring).\n*   **Emergency services:** Capillary blood ketone testing should be considered if the person has uncontrolled diabetes during an illness and urine ketone testing is positive, or if diabetic ketoacidosis (DKA) is suspected.\n*   **Inpatient management:** Capillary blood ketone testing should be considered as part of a formal protocol for the inpatient management of DKA.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-1-diabetes-in-adults-diagnosis-and-management.pdf, page 33",
+      "expected_source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+      "retrieved_sources": [
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.75,
+      "matched_concepts": [
+        "sick-day rules",
+        "hyperglycaemia",
+        "DKA"
+      ],
+      "missing_concepts": [
+        "blood or urine ketones"
+      ],
+      "semantic_similarity": 0.7777,
+      "token_precision": 0.2586,
+      "token_recall": 0.75,
+      "token_f1": 0.3846,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 38.199
+    },
+    {
+      "id": "t2_01",
+      "category": "clinical_reasoning",
+      "question": "Should Type 2 diabetes treatment focus only on HbA1c?",
+      "expected_answer": "No. Management should aim for holistic health improvements, particularly cardiovascular and renal protection, rather than focusing only on HbA1c.",
+      "generated_answer": "Answer:\nNo, type 2 diabetes management should aim for holistic health improvements, specifically renal protection and cardiovascular protection, rather than focusing just on HbA1c targets.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 41",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "no",
+        "holistic",
+        "cardiovascular",
+        "renal",
+        "HbA1c"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8236,
+      "token_precision": 0.5172,
+      "token_recall": 0.7895,
+      "token_f1": 0.625,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 38.278
+    },
+    {
+      "id": "t2_02",
+      "category": "conditional",
+      "question": "What treatment should be offered to adults with Type 2 diabetes and heart failure?",
+      "expected_answer": "Modified-release metformin plus an SGLT-2 inhibitor. If metformin is contraindicated or not tolerated, offer an SGLT-2 inhibitor alone.",
+      "generated_answer": "Answer:\nFor adults with type 2 diabetes and heart failure (any ejection fraction unless specified), the following treatments should be offered:\n*   Modified-release metformin and an SGLT-2 inhibitor.\n*   If metformin is contraindicated or not tolerated, offer monotherapy with an SGLT-2 inhibitor.\n\nAdditionally, for those who require further medicines to reach their individualised glycaemic targets:\n*   Offer to add a DPP-4 inhibitor to their current treatment.\n*   If a DPP-4 inhibitor is not effective, not tolerated, or contraindicated, offer to add either a sulfonylurea or an insulin-based treatment.\n\nPioglitazone should be avoided for people with heart failure as it might worsen cardiovascular outcomes.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 40\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 64\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 85\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 89",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "heart failure",
+        "modified-release metformin",
+        "SGLT-2 inhibitor",
+        "contraindicated",
+        "not tolerated"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7417,
+      "token_precision": 0.1781,
+      "token_recall": 0.8667,
+      "token_f1": 0.2955,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 43.381
+    },
+    {
+      "id": "t2_03",
+      "category": "conditional",
+      "question": "Which medication class is recommended for people with Type 2 diabetes and atherosclerotic cardiovascular disease?",
+      "expected_answer": "An SGLT-2 inhibitor is recommended.",
+      "generated_answer": "Answer:\nFor adults with type 2 diabetes and atherosclerotic cardiovascular disease, the following are recommended:\n*   Modified-release metformin\n*   An SGLT-2 inhibitor\n*   Subcutaneous semaglutide (Ozempic), up to 1 mg once a week, for its glycaemic, renal, and cardiovascular benefits.\n\nIf metformin is not tolerated or is contraindicated, the recommendation is to offer an SGLT-2 inhibitor and subcutaneous semaglutide (Ozempic), up to 1 mg once a week.\n\nAdditionally, if an adult with type 2 diabetes develops atherosclerotic cardiovascular disease after starting initial treatment, it is recommended to offer the addition of subcutaneous semaglutide (Ozempic), up to 1 mg once a week, to their current treatment for its renal and cardiovascular benefits.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 45\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 87",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "atherosclerotic cardiovascular disease",
+        "SGLT-2 inhibitor"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7069,
+      "token_precision": 0.0656,
+      "token_recall": 0.8,
+      "token_f1": 0.1212,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 39.335
+    },
+    {
+      "id": "t2_04",
+      "category": "direct",
+      "question": "What initial treatment does NICE recommend for adults with early-onset Type 2 diabetes?",
+      "expected_answer": "Modified-release metformin plus an SGLT-2 inhibitor, with consideration of adding a GLP-1 receptor agonist or tirzepatide.",
+      "generated_answer": "The provided clinical guideline does not contain sufficient information to answer this question.",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [],
+      "source_hit": true,
+      "concept_coverage": 0.0,
+      "matched_concepts": [],
+      "missing_concepts": [
+        "early-onset",
+        "modified-release metformin",
+        "SGLT-2 inhibitor",
+        "GLP-1",
+        "tirzepatide"
+      ],
+      "semantic_similarity": 0.4787,
+      "token_precision": 0.0,
+      "token_recall": 0.0,
+      "token_f1": 0.0,
+      "relevance_ok": false,
+      "relevance_score": 0.2,
+      "insufficient_evidence": true,
+      "iterations": 2,
+      "latency_seconds": 50.038
+    },
+    {
+      "id": "t2_05",
+      "category": "conditional",
+      "question": "If metformin is contraindicated or not tolerated in early-onset Type 2 diabetes, what does NICE recommend?",
+      "expected_answer": "Offer an SGLT-2 inhibitor and consider adding a GLP-1 receptor agonist or tirzepatide.",
+      "generated_answer": "Answer:\nFor people with early onset diabetes where metformin is contraindicated or not tolerated, NICE recommends that they should receive an SGLT-2 inhibitor, and the addition of tirzepatide or a GLP-1 receptor agonist could be considered.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 55",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "diabetes_guideline.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "metformin",
+        "contraindicated",
+        "not tolerated",
+        "SGLT-2",
+        "GLP-1",
+        "tirzepatide"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7274,
+      "token_precision": 0.225,
+      "token_recall": 0.6923,
+      "token_f1": 0.3396,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 30.246
+    },
+    {
+      "id": "t2_06",
+      "category": "why_question",
+      "question": "Why does NICE recommend intensive treatment for people with early-onset Type 2 diabetes?",
+      "expected_answer": "Because they have a very high lifetime risk of cardiovascular and renal complications and death from these complications, and are more likely to live with obesity.",
+      "generated_answer": "Answer:\nNICE recommends early intensive treatment for people with early-onset type 2 diabetes because the committee agreed that this population is more likely to be living with obesity and has a very high lifetime risk of dying from, and developing, renal and cardiovascular complications. Early intensive treatment can provide benefits by preventing these future negative outcomes.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 52",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "high lifetime risk",
+        "cardiovascular",
+        "renal",
+        "obesity"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6795,
+      "token_precision": 0.2909,
+      "token_recall": 0.6957,
+      "token_f1": 0.4103,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 26.473
+    },
+    {
+      "id": "t2_07",
+      "category": "comparison",
+      "question": "What benefits of GLP-1 receptor agonists and tirzepatide are highlighted in the guideline?",
+      "expected_answer": "GLP-1 receptor agonists provide glycaemic, cardiovascular and renal benefits and may reduce weight. Tirzepatide provides glycaemic benefits and can reduce weight, while cardiovascular benefit is less certain in the cited evidence.",
+      "generated_answer": "Answer:\nThe highlighted benefits for GLP-1 receptor agonists and tirzepatide are as follows:\n\n*   **GLP-1 receptor agonists:**\n    *   They provide cardiovascular benefits regardless of other treatment received (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 54, 125).\n    *   They reduce the risk of cardiovascular events and lead to weight loss as a side effect (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 93).\n    *   They offer cardiovascular and renal benefits and may reduce weight (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 98).\n    *   The cardiovascular benefits and weight loss side effect are noted to likely reduce the number of appointments needed to treat atherosclerotic cardiovascular disease (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 95).\n\n*   **Tirzepatide:**\n    *   It is clinically and cost-effective for reducing weight and HbA1c for people with type 2 diabetes (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 98).\n    *   The committee acknowledged its benefits in reducing weight and HbA1c (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 54, 125).\n    *   It is considered for people living with obesity due to its glycaemic reduction properties (/home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 98).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 54\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 93\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 95\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 98\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 125",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "GLP-1",
+        "glycaemic",
+        "cardiovascular",
+        "renal",
+        "weight",
+        "tirzepatide"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.8761,
+      "token_precision": 0.2162,
+      "token_recall": 0.64,
+      "token_f1": 0.3232,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 32.449
+    },
+    {
+      "id": "t2_08",
+      "category": "timing",
+      "question": "When should a GLP-1 receptor agonist or tirzepatide generally be added to initial therapy?",
+      "expected_answer": "After at least 3 months of initial therapy, allowing the effect of initial treatment on glycaemic targets to be assessed.",
+      "generated_answer": "Answer:\nGLP-1 receptor agonists and tirzepatide were not recommended as initial medicines; instead, they are recommended as treatment options if further medicines are needed (page 60). Generally, a GLP-1 receptor agonist or tirzepatide should only be added after at least 3 months of initial therapy to allow for the assessment of the initial therapy's effect on the person's glycaemic targets (page 99).\n\nSpecifically for adults with type 2 diabetes living with obesity, adding a GLP-1 receptor agonist or tirzepatide should be considered if:\n* they have been taking initial therapy for at least 3 months;\n* further medicines are needed to reach their individualised glycaemic targets; and\n* they are not already taking a GLP-1 receptor agonist or tirzepatide (page 96).\n\nAdditionally, for people with early onset diabetes, adding a GLP-1 receptor agonist or tirzepatide could be considered if metformin is not tolerated or is contraindicated (page 55).\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 55\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 60\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 96\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 99",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "at least 3 months",
+        "initial therapy",
+        "glycaemic targets"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.6479,
+      "token_precision": 0.1975,
+      "token_recall": 0.8889,
+      "token_f1": 0.3232,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 29.057
+    },
+    {
+      "id": "t2_09",
+      "category": "negative_recommendation",
+      "question": "Should capillary blood glucose self-monitoring routinely be offered to every adult with Type 2 diabetes?",
+      "expected_answer": "No. It should not routinely be offered, although it may be appropriate in situations such as insulin use, hypoglycaemia, certain medication-related risks, or pregnancy/planning pregnancy.",
+      "generated_answer": "Answer:\nNo, self-monitoring of capillary blood glucose levels should not be routinely offered to adults with type 2 diabetes unless one of the following conditions applies:\n* the person is on insulin\n* there is evidence of hypoglycaemic episodes\n* the person is on oral medication that may increase their risk of hypoglycaemia while driving or operating machinery\n* they are pregnant or are planning to become pregnant\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 14",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 0.8,
+      "matched_concepts": [
+        "no",
+        "not routinely",
+        "insulin",
+        "hypoglycaemia"
+      ],
+      "missing_concepts": [
+        "pregnancy"
+      ],
+      "semantic_similarity": 0.726,
+      "token_precision": 0.1607,
+      "token_recall": 0.3913,
+      "token_f1": 0.2278,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 34.57
+    },
+    {
+      "id": "t2_10",
+      "category": "clinical_reasoning",
+      "question": "Why might GLP-1 receptor agonists or tirzepatide be considered for people with Type 2 diabetes who are living with obesity?",
+      "expected_answer": "Because of their glycaemic effects; GLP-1 receptor agonists also have cardiovascular and renal benefits, and these treatments may reduce weight.",
+      "generated_answer": "Answer:\nGLP-1 receptor agonists or tirzepatide may be considered for people with type 2 diabetes living with obesity for the following reasons:\n*   **Glycaemic reduction:** They are considered because of their glycaemic reduction properties.\n*   **Weight reduction:** These medicines may reduce weight, which can be an important side effect for healthcare professionals and the person with type 2 diabetes.\n*   **Additional benefits:** GLP-1 receptor agonists specifically provide renal and cardiovascular benefits.\n\nSources:\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/type-2-diabetes-in-adults-management.pdf, page 98",
+      "expected_source": "type-2-diabetes-in-adults-management.pdf",
+      "retrieved_sources": [
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf",
+        "type-2-diabetes-in-adults-management.pdf"
+      ],
+      "source_hit": true,
+      "concept_coverage": 1.0,
+      "matched_concepts": [
+        "Type 2 diabetes",
+        "obesity",
+        "glycaemic",
+        "weight",
+        "GLP-1"
+      ],
+      "missing_concepts": [],
+      "semantic_similarity": 0.7909,
+      "token_precision": 0.2545,
+      "token_recall": 0.7368,
+      "token_f1": 0.3784,
+      "relevance_ok": true,
+      "relevance_score": 1.0,
+      "insufficient_evidence": false,
+      "iterations": 1,
+      "latency_seconds": 28.119
+    }
+  ]
+}

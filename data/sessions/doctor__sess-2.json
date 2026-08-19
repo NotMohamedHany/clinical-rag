@@ -1,0 +1,61 @@
+{
+  "username": "doctor",
+  "session_id": "sess-2",
+  "role": "doctor",
+  "created_at": "2026-08-18T18:42:42+00:00",
+  "last_active": "2026-08-18T18:45:47+00:00",
+  "messages": [
+    {
+      "type": "human",
+      "content": "What fasting plasma glucose level is diagnostic of diabetes?"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"Answer:\\nA fasting venous or capillary plasma glucose level of ≥7.0 mmol/L (126 mg/dL) is diagnostic of diabetes.\\n\\nSources:\\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13\", \"sources\": [{\"source\": \"diabetes_guideline.pdf\", \"page\": 13, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 25, \"type\": \"diabetes\"}, {\"source\": \"type-1-diabetes-in-adults-diagnosis-and-management.pdf\", \"page\": 23, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 7, \"type\": \"diabetes\"}], \"retrieval\": [{\"iteration\": 1, \"query\": \"diagnostic criteria fasting plasma glucose diabetes mellitus\", \"hybrid_results\": 43, \"reranked_results\": 8, \"relevance_score\": 1.0}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "A fasting venous or capillary plasma glucose level of ≥7.0 mmol/L (126 mg/dL) is diagnostic of diabetes (Source: diabetes_guideline.pdf, page 13)."
+    },
+    {
+      "type": "human",
+      "content": "What HbA1c value is used as a diagnostic cutoff for diabetes?"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"Answer:\\nThe diagnostic cut-off value for HbA1c used to diagnose diabetes is 6.5% (48 mmol/mol).\\n\\nSources:\\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13\", \"sources\": [{\"source\": \"diabetes_guideline.pdf\", \"page\": 13, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 17, \"type\": \"diabetes\"}, {\"source\": \"type-1-diabetes-in-adults-diagnosis-and-management.pdf\", \"page\": 18, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 27, \"type\": \"diabetes\"}, {\"source\": \"type-2-diabetes-in-adults-management.pdf\", \"page\": 13, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 25, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 29, \"type\": \"diabetes\"}], \"retrieval\": [{\"iteration\": 1, \"query\": \"HbA1c diagnostic threshold for diabetes mellitus\", \"hybrid_results\": 50, \"reranked_results\": 8, \"relevance_score\": 1.0}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "The diagnostic cut-off value for HbA1c used to diagnose diabetes is 6.5% (48 mmol/mol) (Source: diabetes_guideline.pdf, page 13)."
+    },
+    {
+      "type": "human",
+      "content": "When can a random plasma glucose of ≥11.1 mmol/L be used to diagnose diabetes?"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"Answer:\\nA random plasma glucose of ≥11.1 mmol/L (200 mg/dL) is to be used for the diagnosis of diabetes only in the presence of symptoms.\\n\\nSources:\\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13\", \"sources\": [{\"source\": \"diabetes_guideline.pdf\", \"page\": 13, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 16, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 25, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 19, \"type\": \"diabetes\"}, {\"source\": \"type-1-diabetes-in-adults-diagnosis-and-management.pdf\", \"page\": 6, \"type\": \"diabetes\"}], \"retrieval\": [{\"iteration\": 1, \"query\": \"criteria for diagnosing diabetes using random plasma glucose ≥11.1 mmol/L symptoms hyperglycemia\", \"hybrid_results\": 41, \"reranked_results\": 8, \"relevance_score\": 1.0}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "A random plasma glucose of ≥11.1 mmol/L (200 mg/dL) is used for the diagnosis of diabetes only in the presence of symptoms (Source: diabetes_guideline.pdf, page 13)."
+    },
+    {
+      "type": "human",
+      "content": "If an asymptomatic person has a diagnostic-range glucose result, what should be done?"
+    },
+    {
+      "type": "tool",
+      "content": "{\"answer\": \"Answer:\\nFor asymptomatic people with a diagnostic-range glucose result, the test should be repeated to confirm the diagnosis, preferably using the same test, as soon as practicable on a subsequent day.\\n\\nSources:\\n- /home/not/Desktop/ai_hackathon/clinical-rag/data/diabetes/diabetes_guideline.pdf, page 13\", \"sources\": [{\"source\": \"diabetes_guideline.pdf\", \"page\": 13, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 25, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 16, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 19, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 14, \"type\": \"diabetes\"}, {\"source\": \"diabetes_guideline.pdf\", \"page\": 1, \"type\": \"diabetes\"}], \"retrieval\": [{\"iteration\": 1, \"query\": \"management of asymptomatic patients with diagnostic-range plasma glucose results for diabetes diagnosis\", \"hybrid_results\": 49, \"reranked_results\": 8, \"relevance_score\": 1.0}]}",
+      "name": "clinical_guidelines"
+    },
+    {
+      "type": "ai",
+      "content": "For asymptomatic people with a diagnostic-range glucose result, the test should be repeated to confirm the diagnosis as soon as practicable on a subsequent day, preferably using the same test (Source: diabetes_guideline.pdf, page 13)."
+    }
+  ]
+}

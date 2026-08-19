@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { useAutoResizeTextarea } from '../../hooks/useAutoResizeTextarea';
+import { APP_NAME } from '../../utils/constants';
 import { IconArrowUp, IconPaperclip, IconX } from '../common/Icons';
 
 interface ChatInputProps {
@@ -70,7 +71,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         </div>
       )}
 
-      <div className="composer-hint">Gastro AI can make mistakes. Verify important information with a healthcare professional.</div>
+      <div className="composer-hint">{APP_NAME} can make mistakes. Verify important information with a healthcare professional.</div>
     </div>
   );
 }

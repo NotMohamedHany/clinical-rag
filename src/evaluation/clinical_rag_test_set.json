@@ -1,0 +1,528 @@
+{
+  "description": "Clinical RAG evaluation dataset. Expected answers are based on the uploaded guideline documents.",
+  "total_questions": 40,
+  "documents": 4,
+  "duplicates_excluded": [
+    "type-1-diabetes-in-adults-diagnosis-and-management(1).pdf",
+    "type-2-diabetes-in-adults-management(1).pdf"
+  ],
+  "questions": [
+    {
+      "id": "diabetes_01",
+      "category": "direct",
+      "question": "What fasting plasma glucose level is diagnostic of diabetes?",
+      "expected_answer": "Fasting venous or capillary plasma glucose >= 7.0 mmol/L (126 mg/dL).",
+      "required_concepts": [
+        "7.0 mmol/L",
+        "126 mg/dL",
+        "fasting plasma glucose"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_02",
+      "category": "direct",
+      "question": "What HbA1c value is used as a diagnostic cutoff for diabetes?",
+      "expected_answer": "HbA1c 6.5% (48 mmol/mol).",
+      "required_concepts": [
+        "6.5%",
+        "48 mmol/mol"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_03",
+      "category": "conditional",
+      "question": "When can a random plasma glucose of 11.1 mmol/L or higher be used to diagnose diabetes?",
+      "expected_answer": "When the person has symptoms of diabetes.",
+      "required_concepts": [
+        ">=11.1 mmol/L",
+        "200 mg/dL",
+        "symptoms"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_04",
+      "category": "clinical_reasoning",
+      "question": "If an asymptomatic person has a diagnostic-range glucose result, what should be done?",
+      "expected_answer": "Repeat the diagnostic test on a subsequent day, preferably using the same test.",
+      "required_concepts": [
+        "asymptomatic",
+        "repeat",
+        "subsequent day",
+        "same test"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_05",
+      "category": "comparison",
+      "question": "What are the main differences between Type 1 and Type 2 diabetes?",
+      "expected_answer": "Type 1 is associated with beta-cell destruction and absolute insulin deficiency; Type 2 is characterized by varying beta-cell dysfunction and insulin resistance.",
+      "required_concepts": [
+        "Type 1",
+        "beta-cell destruction",
+        "absolute insulin deficiency",
+        "Type 2",
+        "insulin resistance"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_06",
+      "category": "direct",
+      "question": "What does HbA1c represent when monitoring glycaemic control?",
+      "expected_answer": "It reflects average plasma glucose over approximately the preceding 8–12 weeks.",
+      "required_concepts": [
+        "average plasma glucose",
+        "8–12 weeks"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_07",
+      "category": "direct",
+      "question": "What HbA1c target can the majority of patients with Type 2 diabetes be expected to aim for?",
+      "expected_answer": "Approximately 7.0% (53 mmol/mol), with individualization when appropriate.",
+      "required_concepts": [
+        "7.0%",
+        "53 mmol/mol",
+        "individualized"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_08",
+      "category": "direct",
+      "question": "At what plasma glucose level is hypoglycaemia most frequently defined?",
+      "expected_answer": "At or below 3.9 mmol/L (70 mg/dL).",
+      "required_concepts": [
+        "3.9 mmol/L",
+        "70 mg/dL"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_09",
+      "category": "comparison",
+      "question": "What distinguishes DKA from HHS in terms of glucose and ketones?",
+      "expected_answer": "DKA is associated with high glucose and positive urine ketones, while HHS generally has much higher glucose and negative or weakly positive ketones.",
+      "required_concepts": [
+        "DKA",
+        "HHS",
+        "ketones",
+        "glucose"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "diabetes_10",
+      "category": "list",
+      "question": "What major microvascular complications can result from longstanding poorly controlled diabetes?",
+      "expected_answer": "Diabetic retinopathy, nephropathy, neuropathy, and diabetic foot complications.",
+      "required_concepts": [
+        "retinopathy",
+        "nephropathy",
+        "neuropathy",
+        "diabetic foot"
+      ],
+      "source": "diabetes_guideline.pdf"
+    },
+    {
+      "id": "stomach_01",
+      "category": "direct",
+      "question": "What symptoms can broadly be included under dyspepsia in primary care?",
+      "expected_answer": "Recurrent epigastric pain, heartburn or acid regurgitation, with or without bloating, nausea or vomiting.",
+      "required_concepts": [
+        "epigastric pain",
+        "heartburn",
+        "acid regurgitation",
+        "bloating",
+        "nausea",
+        "vomiting"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_02",
+      "category": "direct",
+      "question": "How long should a patient stop taking a PPI before an H. pylori breath test or stool antigen test?",
+      "expected_answer": "Allow a 2-week PPI washout before testing.",
+      "required_concepts": [
+        "2 weeks",
+        "PPI",
+        "washout"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_03",
+      "category": "direct",
+      "question": "What empirical treatment does NICE recommend for people with dyspepsia?",
+      "expected_answer": "A full-dose PPI for 4 weeks.",
+      "required_concepts": [
+        "full-dose PPI",
+        "4 weeks"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_04",
+      "category": "conditional",
+      "question": "What can be offered if dyspepsia does not respond adequately to a PPI?",
+      "expected_answer": "An H2 receptor antagonist can be offered.",
+      "required_concepts": [
+        "H2 receptor antagonist",
+        "PPI",
+        "inadequate response"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_05",
+      "category": "direct",
+      "question": "What initial treatment does NICE recommend for GORD?",
+      "expected_answer": "A full-dose PPI for 4 or 8 weeks.",
+      "required_concepts": [
+        "GORD",
+        "full-dose PPI",
+        "4 weeks",
+        "8 weeks"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_06",
+      "category": "direct",
+      "question": "How long should full-dose PPI therapy generally be given to heal severe oesophagitis?",
+      "expected_answer": "8 weeks.",
+      "required_concepts": [
+        "severe oesophagitis",
+        "8 weeks",
+        "full-dose PPI"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_07",
+      "category": "conditional",
+      "question": "What treatment should be offered to a patient with peptic ulcer disease who tests positive for H. pylori?",
+      "expected_answer": "H. pylori eradication therapy.",
+      "required_concepts": [
+        "peptic ulcer",
+        "H. pylori",
+        "eradication therapy"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_08",
+      "category": "direct",
+      "question": "What first-line H. pylori eradication regimen is described in the guideline?",
+      "expected_answer": "A 7-day twice-daily regimen consisting of a PPI, amoxicillin, and either clarithromycin or metronidazole, considering previous antibiotic exposure.",
+      "required_concepts": [
+        "7 days",
+        "twice daily",
+        "PPI",
+        "amoxicillin",
+        "clarithromycin",
+        "metronidazole"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_09",
+      "category": "safety",
+      "question": "A patient presents with dyspepsia and significant acute gastrointestinal bleeding. What should happen?",
+      "expected_answer": "Immediate same-day referral to a specialist.",
+      "required_concepts": [
+        "acute gastrointestinal bleeding",
+        "immediate",
+        "same day",
+        "specialist"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "stomach_10",
+      "category": "conditional",
+      "question": "When should referral to a specialist service be considered for people with gastro-oesophageal symptoms?",
+      "expected_answer": "For symptoms that are non-responsive to treatment or unexplained, suspected GORD being considered for surgery, or H. pylori that has not responded to second-line eradication therapy.",
+      "required_concepts": [
+        "non-responsive",
+        "unexplained",
+        "surgery",
+        "H. pylori",
+        "second-line"
+      ],
+      "source": "Stomach1.pdf"
+    },
+    {
+      "id": "t1_01",
+      "category": "clinical_reasoning",
+      "question": "Can a single clinical feature such as age or BMI reliably distinguish Type 1 from Type 2 diabetes in adults?",
+      "expected_answer": "No. No single clinical feature has sufficient predictive value by itself, and age and BMI should not be used in isolation.",
+      "required_concepts": [
+        "no",
+        "single clinical feature",
+        "age",
+        "BMI",
+        "not in isolation"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_02",
+      "category": "direct",
+      "question": "When should diabetes-specific autoantibody testing be performed in adults with suspected Type 1 diabetes?",
+      "expected_answer": "At diagnosis or presentation, because the false-negative rate is lowest then.",
+      "required_concepts": [
+        "autoantibody",
+        "diagnosis",
+        "presentation",
+        "false-negative"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_03",
+      "category": "direct",
+      "question": "How can the false-negative rate of diabetes-specific autoantibody testing be reduced?",
+      "expected_answer": "By performing quantitative tests for two different diabetes-specific autoantibodies, with at least one being positive.",
+      "required_concepts": [
+        "two",
+        "different autoantibodies",
+        "quantitative",
+        "positive"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_04",
+      "category": "negative_recommendation",
+      "question": "Should serum C-peptide routinely be measured to confirm Type 1 diabetes in adults?",
+      "expected_answer": "No. It should not routinely be measured for confirmation. If autoantibodies are negative and classification remains uncertain, non-fasting C-peptide with paired blood glucose can be considered.",
+      "required_concepts": [
+        "no",
+        "not routinely",
+        "autoantibodies negative",
+        "uncertain",
+        "C-peptide",
+        "paired blood glucose"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_05",
+      "category": "safety",
+      "question": "What is the important harm if Type 1 diabetes is misdiagnosed as Type 2?",
+      "expected_answer": "The person may not receive insulin and may subsequently develop diabetic ketoacidosis.",
+      "required_concepts": [
+        "misdiagnosis",
+        "insulin",
+        "diabetic ketoacidosis",
+        "DKA"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_06",
+      "category": "direct",
+      "question": "How frequently should HbA1c generally be measured in adults with Type 1 diabetes?",
+      "expected_answer": "Every 3–6 months, with more frequent measurement considered if glucose control is changing rapidly.",
+      "required_concepts": [
+        "3–6 months",
+        "more frequent",
+        "changing rapidly"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_07",
+      "category": "direct",
+      "question": "What HbA1c target should adults with Type 1 diabetes generally be supported to aim for?",
+      "expected_answer": "48 mmol/mol (6.5%) or lower, provided this does not result in problematic hypoglycaemia and is appropriate for the individual.",
+      "required_concepts": [
+        "48 mmol/mol",
+        "6.5%",
+        "hypoglycaemia"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_08",
+      "category": "direct",
+      "question": "What types of continuous glucose monitoring should adults with Type 1 diabetes be offered?",
+      "expected_answer": "A choice between real-time CGM and intermittently scanned CGM, based on individual preferences, needs, characteristics and device functionality.",
+      "required_concepts": [
+        "real-time CGM",
+        "intermittently scanned CGM",
+        "choice",
+        "individual"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_09",
+      "category": "safety",
+      "question": "What should a person with Type 1 diabetes who can safely swallow use to manage hypoglycaemia?",
+      "expected_answer": "A fast-acting form of glucose.",
+      "required_concepts": [
+        "hypoglycaemia",
+        "safely swallow",
+        "fast-acting glucose"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t1_10",
+      "category": "conditional",
+      "question": "When should ketone monitoring be considered for adults with Type 1 diabetes?",
+      "expected_answer": "As part of sick-day rules, using blood or urine ketone monitoring to help self-manage hyperglycaemia and reduce the risk of DKA.",
+      "required_concepts": [
+        "sick-day rules",
+        "blood or urine ketones",
+        "hyperglycaemia",
+        "DKA"
+      ],
+      "source": "type-1-diabetes-in-adults-diagnosis-and-management.pdf"
+    },
+    {
+      "id": "t2_01",
+      "category": "clinical_reasoning",
+      "question": "Should Type 2 diabetes treatment focus only on HbA1c?",
+      "expected_answer": "No. Management should aim for holistic health improvements, particularly cardiovascular and renal protection, rather than focusing only on HbA1c.",
+      "required_concepts": [
+        "no",
+        "holistic",
+        "cardiovascular",
+        "renal",
+        "HbA1c"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_02",
+      "category": "conditional",
+      "question": "What treatment should be offered to adults with Type 2 diabetes and heart failure?",
+      "expected_answer": "Modified-release metformin plus an SGLT-2 inhibitor. If metformin is contraindicated or not tolerated, offer an SGLT-2 inhibitor alone.",
+      "required_concepts": [
+        "heart failure",
+        "modified-release metformin",
+        "SGLT-2 inhibitor",
+        "contraindicated",
+        "not tolerated"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_03",
+      "category": "conditional",
+      "question": "Which medication class is recommended for people with Type 2 diabetes and atherosclerotic cardiovascular disease?",
+      "expected_answer": "An SGLT-2 inhibitor is recommended.",
+      "required_concepts": [
+        "atherosclerotic cardiovascular disease",
+        "SGLT-2 inhibitor"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_04",
+      "category": "direct",
+      "question": "What initial treatment does NICE recommend for adults with early-onset Type 2 diabetes?",
+      "expected_answer": "Modified-release metformin plus an SGLT-2 inhibitor, with consideration of adding a GLP-1 receptor agonist or tirzepatide.",
+      "required_concepts": [
+        "early-onset",
+        "modified-release metformin",
+        "SGLT-2 inhibitor",
+        "GLP-1",
+        "tirzepatide"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_05",
+      "category": "conditional",
+      "question": "If metformin is contraindicated or not tolerated in early-onset Type 2 diabetes, what does NICE recommend?",
+      "expected_answer": "Offer an SGLT-2 inhibitor and consider adding a GLP-1 receptor agonist or tirzepatide.",
+      "required_concepts": [
+        "metformin",
+        "contraindicated",
+        "not tolerated",
+        "SGLT-2",
+        "GLP-1",
+        "tirzepatide"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_06",
+      "category": "why_question",
+      "question": "Why does NICE recommend intensive treatment for people with early-onset Type 2 diabetes?",
+      "expected_answer": "Because they have a very high lifetime risk of cardiovascular and renal complications and death from these complications, and are more likely to live with obesity.",
+      "required_concepts": [
+        "high lifetime risk",
+        "cardiovascular",
+        "renal",
+        "obesity"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_07",
+      "category": "comparison",
+      "question": "What benefits of GLP-1 receptor agonists and tirzepatide are highlighted in the guideline?",
+      "expected_answer": "GLP-1 receptor agonists provide glycaemic, cardiovascular and renal benefits and may reduce weight. Tirzepatide provides glycaemic benefits and can reduce weight, while cardiovascular benefit is less certain in the cited evidence.",
+      "required_concepts": [
+        "GLP-1",
+        "glycaemic",
+        "cardiovascular",
+        "renal",
+        "weight",
+        "tirzepatide"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_08",
+      "category": "timing",
+      "question": "When should a GLP-1 receptor agonist or tirzepatide generally be added to initial therapy?",
+      "expected_answer": "After at least 3 months of initial therapy, allowing the effect of initial treatment on glycaemic targets to be assessed.",
+      "required_concepts": [
+        "at least 3 months",
+        "initial therapy",
+        "glycaemic targets"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_09",
+      "category": "negative_recommendation",
+      "question": "Should capillary blood glucose self-monitoring routinely be offered to every adult with Type 2 diabetes?",
+      "expected_answer": "No. It should not routinely be offered, although it may be appropriate in situations such as insulin use, hypoglycaemia, certain medication-related risks, or pregnancy/planning pregnancy.",
+      "required_concepts": [
+        "no",
+        "not routinely",
+        "insulin",
+        "hypoglycaemia",
+        "pregnancy"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    },
+    {
+      "id": "t2_10",
+      "category": "clinical_reasoning",
+      "question": "Why might GLP-1 receptor agonists or tirzepatide be considered for people with Type 2 diabetes who are living with obesity?",
+      "expected_answer": "Because of their glycaemic effects; GLP-1 receptor agonists also have cardiovascular and renal benefits, and these treatments may reduce weight.",
+      "required_concepts": [
+        "Type 2 diabetes",
+        "obesity",
+        "glycaemic",
+        "weight",
+        "GLP-1"
+      ],
+      "source": "type-2-diabetes-in-adults-management.pdf"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useToast } from '../context/ToastContext';
 import { IconMonitor, IconMoon, IconSun } from '../components/common/Icons';
+import { APP_NAME } from '../utils/constants';
 
 export function SettingsPage() {
   const { user, signOut } = useAuth();
@@ -48,7 +49,7 @@ export function SettingsPage() {
 
           <div className="settings-card">
             <h3>Appearance</h3>
-            <p className="settings-card-sub">Choose how Gastro AI looks on your device.</p>
+            <p className="settings-card-sub">Choose how {APP_NAME} looks on your device.</p>
             <div className="theme-switch-group">
               <button
                 className={`theme-switch-opt ${mode === 'light' ? 'active' : ''}`}
@@ -73,7 +74,7 @@ export function SettingsPage() {
 
           <div className="settings-card">
             <h3>Notifications</h3>
-            <p className="settings-card-sub">Choose what Gastro AI can notify you about.</p>
+            <p className="settings-card-sub">Choose what {APP_NAME} can notify you about.</p>
             <div className="settings-row">
               <div>
                 <div className="settings-row-label">Product updates</div>

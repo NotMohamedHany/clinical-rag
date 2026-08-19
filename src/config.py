@@ -42,7 +42,7 @@ COLLECTION_NAME = "clinical_guidelines"
 # Embeddings (dense retrieval) — kept separate from the LLM
 # ---------------------------------------------------------------------------
 
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "BAAI/bge-m3"
 
 # ---------------------------------------------------------------------------
 # LLM (Ollama)
