@@ -10,9 +10,12 @@ within one query's candidate set.
 """
 
 from sentence_transformers import CrossEncoder
-
+import requests
 from src import config
 from src.rag.state import RetrievedChunk
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 _model: CrossEncoder | None = None
 
@@ -43,4 +46,38 @@ def rerank(
 
     ranked = sorted(zip(candidates, scores), key=lambda pair: pair[1], reverse=True)
     top = ranked[:top_n]
+    return [chunk for chunk, _ in top], [score for _, score in top]
+
+def rerank_api(
+    query: str,
+    candidates: list[RetrievedChunk],
+    top_n: int = config.RERANK_TOP_N,
+) -> tuple[list[RetrievedChunk], list[float]]:
+    """Score candidates with the cross-encoder and keep the top_n.
+
+    Returns (top_chunks, scores) where scores[i] is the raw reranker score
+    of top_chunks[i] (higher = more relevant, same query only).
+    """
+    if not candidates:
+        return [], []
+
+    url = "https://api.jina.ai/v1/rerank"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {os.getenv('COHERE_KEY')}"
+    }
+    chunks=[chunk.content for chunk in candidates]
+    data = {
+    "model": os.getenv('COHERE_MODEL'),
+    "query": query,
+    "top_n": top_n,
+    "documents": chunks}
+
+
+    response = requests.post(url, headers=headers, json=data)
+
+    
+    results = response.json()["results"]
+    
+    top = [ [candidates[result["index"]],result["relevance_score"]] for result in results]
     return [chunk for chunk, _ in top], [score for _, score in top]

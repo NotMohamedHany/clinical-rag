@@ -15,3 +15,4 @@ wheels/
 
 # Auth: user registry (contains password hashes; auto-seeded on first run)
 users.csv
+data/

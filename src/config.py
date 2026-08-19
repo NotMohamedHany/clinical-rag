@@ -56,6 +56,8 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # ---------------------------------------------------------------------------
 
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+COHERE_KEY = os.getenv("COHERE_KEY", "")
+COHERE_MODEL=os.getenv("COHERE_MODEL", "")
 
 # ---------------------------------------------------------------------------
 # Chunking
@@ -71,7 +73,7 @@ CHUNK_OVERLAP = 200
 VECTOR_K = 30       # candidates from dense (Chroma) search
 BM25_K = 30         # candidates from sparse (BM25) search
 RRF_K = 60          # reciprocal-rank-fusion constant
-RERANK_TOP_N = 8    # final documents after reranking
+RERANK_TOP_N = 10    # final documents after reranking
 
 # ---------------------------------------------------------------------------
 # Self-improving retrieval

@@ -23,7 +23,7 @@ from src.rag.generator import Generator
 from src.rag.hybrid_search import HybridSearch
 from src.rag.query_rewriter import QueryRewriter
 from src.rag.relevance_grader import RelevanceGrader
-from src.rag.reranker import rerank
+from src.rag.reranker import rerank,rerank_api
 from src.rag.state import RagState
 
 logger = logging.getLogger("clinical_rag.graph")
@@ -141,7 +141,10 @@ class RagAgent:
     def _hybrid_search(self, state: RagState) -> dict:
         query = state["current_query"]
         candidates = self.hybrid_search.search(query)
-        new_top_chunks, scores = rerank(query, candidates, top_n=config.RERANK_TOP_N)
+        try:
+            new_top_chunks, scores = rerank_api(query, candidates, top_n=config.RERANK_TOP_N)
+        except:
+            new_top_chunks, scores = rerank(query, candidates, top_n=config.RERANK_TOP_N)
 
         existing = list(state.get("top_chunks", []))
         seen_ids = {c.chunk_id for c in existing}
