@@ -234,7 +234,7 @@ clinical-rag/
 
 ## 5. Environment & Configuration
 
-Environment configuration is read from `.env` (loaded automatically by [`src/config.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/config.py)).
+Environment configuration is read from `.env` (loaded automatically by [`src/config.py`](clinical-rag/src/config.py)).
 
 ### Environment Variables Template (`.env`)
 
@@ -245,7 +245,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 
 # Security & Authentication
 TOKEN_TTL_SECONDS=0                              # 0 = tokens never expire automatically
-USERS_CSV_PATH=/home/not/Desktop/ai_hackathon/clinical-rag/users.csv
+USERS_CSV_PATH=clinical-rag/users.csv
 
 # Hugging Face Access Token (Optional: Speeds up model downloads)
 HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -255,7 +255,7 @@ VITE_API_URL=http://localhost:8000
 VITE_USE_MOCK_API=false
 ```
 
-### Core Configuration Parameters ([`src/config.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/config.py))
+### Core Configuration Parameters ([`src/config.py`](clinical-rag/src/config.py))
 
 | Parameter | Value | Description |
 |---|---|---|
@@ -316,7 +316,7 @@ cp .env.example .env
 
 ## 7. Ingestion Pipeline
 
-The ingestion pipeline ([`src/ingestion/ingest.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/ingestion/ingest.py)) parses and indexes all PDF files placed under `data/`.
+The ingestion pipeline ([`src/ingestion/ingest.py`](clinical-rag/src/ingestion/ingest.py)) parses and indexes all PDF files placed under `data/`.
 
 ```bash
 python -m src.ingestion.ingest
@@ -369,7 +369,7 @@ streamlit run frontend/app.py
 
 ## 9. Role-Based Access Control (RBAC)
 
-RBAC is enforced on the server ([`src/agent/supervisor.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/supervisor.py)).
+RBAC is enforced on the server ([`src/agent/supervisor.py`](clinical-rag/src/agent/supervisor.py)).
 
 ### Role Matrix
 
@@ -382,7 +382,7 @@ RBAC is enforced on the server ([`src/agent/supervisor.py`](file:///home/not/Des
 - **Doctor Account**: `username: doctor` / `password: doctor123`
 - **Patient Account**: `username: patient` / `password: patient123`
 
-### CLI Account Management ([`src/api/auth.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/api/auth.py))
+### CLI Account Management ([`src/api/auth.py`](clinical-rag/src/api/auth.py))
 
 ```bash
 # List all registered accounts
@@ -514,7 +514,7 @@ Clears memory and resets supervisor state for the specified session.
 
 ## 11. Specialized Agent Tools
 
-The platform provides specialized tools ([`src/agent/patient.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/patient.py), [`src/agent/tools.py`](file:///home/not/Desktop/ai_hackathon/clinical-rag/src/agent/tools.py)):
+The platform provides specialized tools ([`src/agent/patient.py`](clinical-rag/src/agent/patient.py), [`src/agent/tools.py`](clinical-rag/src/agent/tools.py)):
 
 1. **`clinical_guidelines`**:
    - LangChain tool wrapping the complete agentic RAG pipeline.
