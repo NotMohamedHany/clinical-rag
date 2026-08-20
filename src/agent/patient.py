@@ -4,7 +4,7 @@ load_dotenv()
 
 
 from langchain_ollama import ChatOllama
-
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.tools import tool
 
@@ -12,15 +12,15 @@ from langchain_core.output_parsers import StrOutputParser
 # from langchain_tavily import TavilySearch
 from src import config
 
-_patient_llm: ChatOllama | None = None
+_patient_llm: ChatGroq | None = None
 
 
-def _get_patient_llm() -> ChatOllama:
+def _get_patient_llm() -> ChatGroq:
     global _patient_llm
     if _patient_llm is None:
-        _patient_llm = ChatOllama(
-            model=config.OLLAMA_MODEL,
-            base_url=config.OLLAMA_BASE_URL,
+        _patient_llm = ChatGroq(
+            model=config.GROQ_MODEL,
+            temperature=.1,
         )
     return _patient_llm
 

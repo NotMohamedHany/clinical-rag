@@ -1,9 +1,12 @@
 """Shared Ollama LLM helpers used by the rewriter, grader and generator."""
 
 import time
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 import httpx
 from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
 from ollama import ResponseError
 
 from src import config
@@ -16,8 +19,13 @@ class OllamaUnavailableError(RuntimeError):
     """
 
 
-def get_llm(temperature: float = 0) -> ChatOllama:
+def get_llm(temperature: float = 0,model=os.getenv("GROQ",None)) -> ChatOllama:
     """Return a ChatOllama instance configured from the environment."""
+    if(model):
+        return ChatGroq(
+            model=config.GROQ_MODEL,
+            temperature=temperature,
+        )
     return ChatOllama(
         model=config.OLLAMA_MODEL,
         base_url=config.OLLAMA_BASE_URL,

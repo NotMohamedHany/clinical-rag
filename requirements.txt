@@ -5,6 +5,8 @@ langchain-text-splitters
 langchain-huggingface
 langchain-ollama
 langchain-mcp-adapters
+langchain-cohere
+langchain-groq
 langgraph
 
 # MCP (calendar agent)
